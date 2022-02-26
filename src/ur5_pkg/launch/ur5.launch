@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<launch>
+    <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="world_name" value="$(find ur5_pkg)/world/my_world.world"/> <!-- custom world -->
+        <arg name="paused" value="true"/> <!--paused in order to spawn the robot in the correct position -->
+        <arg name="gui" value="true"/>
+        <arg name="debug" value="false"/>
+    </include>
+
+
+    
+    <!-- <node name="code_node" type="code_node.cpp" pkg="ur5_pkg" /> -->
+</launch>
