@@ -1,6 +1,8 @@
 Per far partire il programma:
 
-catkin_make o catkin build
+catkin_make
+
+
 source devel/setup.bash
 
 roslaunch ur5_pkg ur5_gripper.launch
