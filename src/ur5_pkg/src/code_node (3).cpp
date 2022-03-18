@@ -12,12 +12,12 @@
 #include <chrono>
 #include <thread>
 
-#include <ros/ros.h>
+#include "ros/ros.h"
 #include <ros/package.h>
-#include <std_msgs/String.h>
+#include "std_msgs/String.h"
 
-#include <std_msgs/Float64.h>
-#include <control_msgs/JointControllerState.h>
+#include "std_msgs/Float64.h"
+#include "control_msgs/JointControllerState.h"
 
 #include <eigen3/Eigen/Core>
 #include <eigen3/Eigen/Dense>
@@ -61,6 +61,8 @@ const vector<double> Ai = {0.0, -0.42500, -0.39225, 0.0, 0.0, 0.0};
 const vector<double> ALPHAi = {0.0, PI/2, 0.0, 0.0, PI/2, -PI/2};
 const vector<double> Di = {0.089159, 0.0, 0.0, 0.10915, 0.09465, 0.0823};
 
+const bool debug = false;
+
 //---------------------------------------------
 
 //METODI
@@ -83,6 +85,7 @@ Matrix4ld transform65(long double);
 
 pair<Matrix4ld, Matrix4ld> computeForwardKinematics(int = 5);
 pair<Matrix4ld, Matrix4ld> computeForwardKinematicsTwo(int = 5);
+Matrix4ld computeForwardKinematicsThree();
 Matrix86ld computeInverseKinematics(Vector3ld, Matrix3ld);
 
 void print_position(int);
@@ -170,10 +173,40 @@ int main (int argc, char **argv)
     cout << GREEN << "OK" << NC << endl;
 
     //------------------------------------------------------------------------------------------------------------
-    
-    //Stampo la posizione dei giunti
-    print_positions();
+    string response;
 
+    //Ciclo in stampo la poszione dell'end effector calcolato con la dk
+    while(-1)
+    {
+        if(debug)
+            //Stampo la posizione dei giunti 
+            //Solo per utenti esperti
+            print_positions();
+
+        //Stampo la posizione dell'end effector attuale
+        print_reduct_final_position();
+
+        cout << "Di nuovo? (y/n) : ";
+        cin >> response;
+
+        if(response != "y")
+            break;
+        
+        //Controllo che tutto stia funzionando correttamente
+        cout << "Attendo che il robot sia pronto ... " << flush;
+        for(int i=0; i< 2; i++) {
+            ros::spinOnce();
+            loop_rate.sleep();
+        }
+        if(!ros::ok)
+        {
+            cout << RED << "FALIED" << NC << endl;
+            exit(1);
+        }
+        cout << GREEN << "OK" << NC << endl;
+    }
+
+    /*
     //Vettore e Matrice con le coordinate del nuovo punto
     Matrix3ld rotation;
     Vector3ld point;
@@ -249,9 +282,7 @@ int main (int argc, char **argv)
         if(response != "y")
             stop = true;
     }
-
-    //Stampo la posizione dell'end effector attuale
-    print_reduct_final_position();
+    */
 
     cout << MAGENTA << " *** Fine Comandi Robot *** " << NC << endl;
 
@@ -516,10 +547,35 @@ pair<Matrix4ld, Matrix4ld> computeForwardKinematicsTwo(int joint)
     return make_pair(base_desired, base_current);
 }
 
+Matrix4ld computeForwardKinematicsThree()
+{
+    //Posizione effettiva
+    Matrix4ld base_current 
+    {
+        {1.0, 0.0, 0.0, 0.0},
+        {0.0, 1.0, 0.0, 0.0},
+        {0.0, 0.0, 1.0, 0.0},
+        {0.0, 0.0, 0.0, 1.0}
+    };
+
+    base_current *= transform10(jointState[0]->process_value);
+    base_current *= transform21(jointState[1]->process_value);
+    base_current *= transform32(jointState[2]->process_value);
+    base_current *= transform43(jointState[3]->process_value);
+    base_current *= transform54(jointState[4]->process_value);
+    base_current *= transform65(jointState[5]->process_value);
+
+    return base_current;
+}
+
 void print_reduct_final_position()
 {
-    Matrix4ld position = computeForwardKinematicsTwo().second;
-    cout << BLUE << "Position : " << NC << " [" << GREEN << " X" << NC << " -> " << YELLOW << position(0, 3) << NC << GREEN << "; Y" << NC << " -> " << YELLOW << position(1, 3) << GREEN << "; Z" << NC << " -> " << YELLOW << position(2, 3) << NC << "; ] " << endl;
+    Matrix4ld position = computeForwardKinematicsThree();
+    cout << BLUE << "Motors: " << NC << " [ ";
+    for(auto foo : jointState)
+        cout << foo->process_value << " ";
+    cout << "]" << endl;
+    cout << BLUE << "Position : " << NC << " [" << GREEN << " X" << NC << " -> " << YELLOW << position(0, 3) << NC << "; " << GREEN << "Y" << NC << " -> " << YELLOW << position(1, 3) << NC << "; " << GREEN << "Z" << NC << " -> " << YELLOW << position(2, 3) << NC << "; ] " << endl;
 }
 
 void print_position(int joint)
@@ -591,7 +647,7 @@ Matrix4ld transform32(long double theta_2)
 {
     Matrix4ld actual 
     {
-        {cos(theta_2), -sin(theta_2), 0.0, Ai[2]},
+        {cos(theta_2), -sin(theta_2), 0.0, Ai[1]}, //o A[2]??
         {sin(theta_2), cos(theta_2), 0.0, 0.0},
         {0.0, 0.0, 1.0, 0.0},
         {0.0, 0.0, 0.0, 1.0}
@@ -604,7 +660,7 @@ Matrix4ld transform43(long double theta_3)
 {
     Matrix4ld actual 
     {
-        {cos(theta_3), -sin(theta_3), 0.0, Ai[3]},
+        {cos(theta_3), -sin(theta_3), 0.0, Ai[2]},//o A[3]??
         {sin(theta_3), cos(theta_3), 0.0, 0.0},
         {0.0, 0.0, 1.0, Di[3]},
         {0.0, 0.0, 0.0, 1.0}
