@@ -10,6 +10,8 @@ roslaunch ur5_pkg ur5_gripper.launch
 in un secondo terminale:
 
 source devel/setup.bash
-rosrun ur5_pkg ur5_pkg_node
+rosrun ur5_pkg node
 
 per lanciare il nodo
+
+aggiunto service forward kinematic
