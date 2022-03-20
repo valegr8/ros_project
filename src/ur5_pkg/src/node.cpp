@@ -20,8 +20,7 @@
 
 #define LOOP_RATE_FREQUENCY 10  /**< used to set run loops frequency*/
 
-
-static vector <ros::Subscriber> subscribers(JOINT_NUM); /**< global subscribers vector*/
+static vector<ros::Subscriber> subscribers(JOINT_NUM); /**< global subscribers vector*/
 static double jointState[JOINT_NUM]; /**< contains all /state values of the joints*/
 
 void get_position_shoulder_pan(const control_msgs::JointControllerState::ConstPtr& ctr_msg) {jointState[0] = ctr_msg->process_value;}
@@ -32,7 +31,8 @@ void get_position_wrist_2(const control_msgs::JointControllerState::ConstPtr& ct
 void get_position_wrist_3(const control_msgs::JointControllerState::ConstPtr& ctr_msg) {jointState[5] = ctr_msg->process_value;}
 
 
-void set_subscribers(ros::NodeHandle n){
+void set_subscribers(ros::NodeHandle n)
+{
     int queue_size = 1000;
     subscribers[0] = n.subscribe("/shoulder_pan_joint_position_controller/state", queue_size, get_position_shoulder_pan);
     subscribers[1] = n.subscribe("/shoulder_lift_joint_position_controller/state", queue_size, get_position_shoulder_lift);
@@ -46,15 +46,15 @@ void set_subscribers(ros::NodeHandle n){
  * @brief Create a client object and calls forward kinematic service
  * 
  * @param n NodeHandle
- * @return 0 if successful, 1 otherrwise
+ * @return true if successful, false otherrwise
  */
-int call_fk_service(ros::NodeHandle n){
-    //<ForwardKinematic> defines the tipe of the service (.srv), "ForwardKinematc" is the name (defined in .cpp)
+bool call_fk_service(ros::NodeHandle n)
+{
+    //<ForwardKinematic> defines the type of the service (.srv), "ForwardKinematc" is the name (defined in .cpp)
     ros::ServiceClient client = n.serviceClient<ur5_pkg::ForwardKinematic>("ForwardKinematc");
-    
-
     ur5_pkg::ForwardKinematic srv;
 
+    //Coping data
     srv.request.theta0 = jointState[0];
     srv.request.theta1 = jointState[1];
     srv.request.theta2 = jointState[2];
@@ -62,16 +62,26 @@ int call_fk_service(ros::NodeHandle n){
     srv.request.theta4 = jointState[4];
     srv.request.theta5 = jointState[5];
 
+    cout << BLUE << "Joint: " << NC << " [ ";
+    for(auto foo : jointState)
+        cout << foo << " ";
+    cout << "]" << endl;
+
     if (client.call(srv))
     {
-        ROS_INFO("x: %f - y: %f - z: %f\n", srv.response.x, srv.response.y, srv.response.z);
+        cout << BLUE << "Position : " << NC << " [";
+        cout << GREEN << " X" << NC << " -> " << YELLOW << srv.response.x << NC << "; "; 
+        cout << GREEN << "Y" << NC << " -> " << YELLOW << srv.response.y << NC << "; ";
+        cout << GREEN << "Z" << NC << " -> " << YELLOW << srv.response.z << NC << "; ] ";
+        cout << endl;
     }
     else
     {
         ROS_ERROR("Failed to call service\n");
-        return 1;
+        return false;
     }
-    return 0;
+
+    return true;
 }
 
 int main (int argc, char **argv)
@@ -90,6 +100,9 @@ int main (int argc, char **argv)
         ros::spinOnce();
         call_fk_service(nodeHandle);
         loop_rate.sleep();
+
+        //Sleeping for 5 sec
+        sleep(5);
     }
 
     ROS_ERROR("Ros not working\n");
