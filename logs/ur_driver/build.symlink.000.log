@@ -1,0 +1,10 @@
+Symlinking /home/ubuntu/ros_project/devel/include/ur_driver/URDriverConfig.h
+Symlinking /home/ubuntu/ros_project/devel/lib/pkgconfig/ur_driver.pc
+Symlinking /home/ubuntu/ros_project/devel/lib/python3/dist-packages/ur_driver/__init__.py
+Symlinking /home/ubuntu/ros_project/devel/lib/python3/dist-packages/ur_driver/cfg/URDriverConfig.py
+Symlinking /home/ubuntu/ros_project/devel/lib/python3/dist-packages/ur_driver/cfg/__init__.py
+Symlinking /home/ubuntu/ros_project/devel/share/ur_driver/cmake/ur_driverConfig-version.cmake
+Symlinking /home/ubuntu/ros_project/devel/share/ur_driver/cmake/ur_driverConfig.cmake
+Symlinking /home/ubuntu/ros_project/devel/share/ur_driver/docs/URDriverConfig.dox
+Symlinking /home/ubuntu/ros_project/devel/share/ur_driver/docs/URDriverConfig.wikidoc
+Symlinking /home/ubuntu/ros_project/devel/share/ur_driver/docs/URDriverConfig-usage.dox

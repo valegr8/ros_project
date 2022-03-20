@@ -1,0 +1,12 @@
+Symlinking /home/ubuntu/ros_project/devel/./local_setup.sh
+Symlinking /home/ubuntu/ros_project/devel/./_setup_util.py
+Symlinking /home/ubuntu/ros_project/devel/./local_setup.bash
+Symlinking /home/ubuntu/ros_project/devel/./setup.sh
+Symlinking /home/ubuntu/ros_project/devel/./setup.bash
+Symlinking /home/ubuntu/ros_project/devel/./setup.zsh
+Symlinking /home/ubuntu/ros_project/devel/./local_setup.zsh
+Symlinking /home/ubuntu/ros_project/devel/./env.sh
+Symlinking /home/ubuntu/ros_project/devel/./cmake.lock
+Symlinking /home/ubuntu/ros_project/devel/lib/pkgconfig/catkin_tools_prebuild.pc
+Symlinking /home/ubuntu/ros_project/devel/share/catkin_tools_prebuild/cmake/catkin_tools_prebuildConfig.cmake
+Symlinking /home/ubuntu/ros_project/devel/share/catkin_tools_prebuild/cmake/catkin_tools_prebuildConfig-version.cmake
