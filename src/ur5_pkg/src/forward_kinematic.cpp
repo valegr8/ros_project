@@ -15,7 +15,7 @@
 #include <ur5_pkg/ForwardKinematic.h>
 
 #define DEBUG 1
-#undef DEBUG
+// #undef DEBUG
 
 Matrix4ld transform10(long double theta_0)
 {
@@ -107,7 +107,14 @@ void print_matrix(Matrix4ld m){
 bool forward_kinematic(ur5_pkg::ForwardKinematic::Request  &req, ur5_pkg::ForwardKinematic::Response &res)
 {
 
-    Matrix4ld T;
+    Matrix4ld T 
+    {
+        {1.0, 0.0, 0.0, 0.0},
+        {0.0, 1.0, 0.0, 0.0},
+        {0.0, 0.0, 1.0, 0.0},
+        {0.0, 0.0, 0.0, 1.0}
+    };
+    
 
     T = transform10(req.theta0);
 #ifdef DEBUG
