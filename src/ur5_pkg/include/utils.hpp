@@ -22,12 +22,12 @@ using namespace std;
 using namespace ros;
 
 
-#define GREEN = "\033[0;92m";
-#define RED = "\033[0;91m";
-#define BLUE = "\033[0;94m";
-#define YELLOW = "\033[0;33m";
-#define MAGENTA = "\033[0;95m";
-#define NC "\033[0m"; // No Color
+#define GREEN "\033[0;92m"
+#define RED "\033[0;91m"
+#define BLUE "\033[0;94m"
+#define YELLOW "\033[0;33m"
+#define MAGENTA "\033[0;95m"
+#define NC "\033[0m" // No Color
 
 #define JOINT_NUM 6  /**< number of joint for ur5*/
 

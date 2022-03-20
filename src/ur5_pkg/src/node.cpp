@@ -21,7 +21,7 @@
 #define LOOP_RATE_FREQUENCY 10  /**< used to set run loops frequency*/
 
 
-static vector <ros::Subscriber> subscribers(JOINT_NUM); /**< global subscribers vector*/
+static vector<ros::Subscriber> subscribers(JOINT_NUM); /**< global subscribers vector*/
 static double jointState[JOINT_NUM]; /**< contains all /state values of the joints*/
 
 void get_position_shoulder_pan(const control_msgs::JointControllerState::ConstPtr& ctr_msg) {jointState[0] = ctr_msg->process_value;}
@@ -48,7 +48,8 @@ void set_subscribers(ros::NodeHandle n){
  * @param n NodeHandle
  * @return 0 if successful, 1 otherrwise
  */
-int call_fk_service(ros::NodeHandle n){
+int call_fk_service(ros::NodeHandle n)
+{
     //<ForwardKinematic> defines the tipe of the service (.srv), "ForwardKinematc" is the name (defined in .cpp)
     ros::ServiceClient client = n.serviceClient<ur5_pkg::ForwardKinematic>("ForwardKinematc");
     

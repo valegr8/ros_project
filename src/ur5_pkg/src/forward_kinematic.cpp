@@ -95,7 +95,8 @@ Matrix4ld transform65(long double theta_5)
     return actual;
 }
 
-void print_matrix(Matrix4ld m){
+void print_matrix(Matrix4ld m)
+{
     printf("------------------------------------------------\n");
     printf("%Lf, %Lf, %Lf, %Lf ;\n", m(0,0), m(0,1), m(0,2), m(0,3));
     printf("%Lf, %Lf, %Lf, %Lf ;\n", m(1,0), m(1,1), m(1,2), m(1,3));
