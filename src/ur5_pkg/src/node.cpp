@@ -20,10 +20,6 @@
 
 #define LOOP_RATE_FREQUENCY 10  /**< used to set run loops frequency*/
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 3bf24d0037b0880cf8115b1bfe58b1f5c0c3a297
 static vector<ros::Subscriber> subscribers(JOINT_NUM); /**< global subscribers vector*/
 static double jointState[JOINT_NUM]; /**< contains all /state values of the joints*/
 
@@ -52,15 +48,9 @@ void set_subscribers(ros::NodeHandle n)
  * @param n NodeHandle
  * @return true if successful, false otherrwise
  */
-<<<<<<< HEAD
-int call_fk_service(ros::NodeHandle n)
-{
-    //<ForwardKinematic> defines the tipe of the service (.srv), "ForwardKinematc" is the name (defined in .cpp)
-=======
 bool call_fk_service(ros::NodeHandle n)
 {
     //<ForwardKinematic> defines the type of the service (.srv), "ForwardKinematc" is the name (defined in .cpp)
->>>>>>> 3bf24d0037b0880cf8115b1bfe58b1f5c0c3a297
     ros::ServiceClient client = n.serviceClient<ur5_pkg::ForwardKinematic>("ForwardKinematc");
     ur5_pkg::ForwardKinematic srv;
 
