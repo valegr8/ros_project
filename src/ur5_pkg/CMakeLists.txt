@@ -63,6 +63,7 @@ find_package (Eigen3 REQUIRED)
    FILES
    ForwardKinematic.srv
    InverseKinematic.srv
+   JacobianKinematic.srv
  )
  
  ## Generate actions in the 'action' folder
@@ -144,7 +145,7 @@ find_package (Eigen3 REQUIRED)
 add_executable(node src/node.cpp)
 add_executable(forward_kinematic src/forward_kinematic.cpp)
 add_executable(inverse_kinematic src/inverse_kinematic.cpp)
-
+add_executable(jacobian_kinematic src/jacobian_kinematic.cpp)
  
  ## Rename C++ executable without prefix
  ## The above recommended prefix causes long target names, the following renames the
@@ -160,6 +161,7 @@ add_executable(inverse_kinematic src/inverse_kinematic.cpp)
 target_link_libraries(node ${catkin_LIBRARIES})
 target_link_libraries(forward_kinematic ${catkin_LIBRARIES})
 target_link_libraries(inverse_kinematic ${catkin_LIBRARIES})
+target_link_libraries(jacobian_kinematic ${catkin_LIBRARIES})
  
  #############
  ## Install ##

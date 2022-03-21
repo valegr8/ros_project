@@ -47,5 +47,6 @@
 
     <node name="forward_kinematic" pkg="ur5_pkg" type="forward_kinematic"/>
     <node name="inverse_kinematic" pkg="ur5_pkg" type="inverse_kinematic"/>
+    <node name="jacobian_kinematic" pkg="ur5_pkg" type="jacobian_kinematic"/>
 
 </launch>

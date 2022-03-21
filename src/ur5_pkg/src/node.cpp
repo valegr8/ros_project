@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <ur5_pkg/ForwardKinematic.h>
 #include <ur5_pkg/InverseKinematic.h>
+#include <ur5_pkg/JacobianKinematic.h>
 
 #define DEBUG 1 /**< used for debug print*/
 
@@ -89,8 +90,29 @@ bool call_ik_service(ros::NodeHandle n)
 
     if (client.call(srv))
     {
-        cout<<"Inverse kinematic joints: "<<endl;
+        cout << RED <<"Inverse kinematic joints: "<<endl;
         print_joints(jointState);
+    }
+    else
+    {
+        ROS_ERROR("Failed to call service\n");
+        return false;
+    }
+
+    return true;
+}
+
+bool call_jk_service(ros::NodeHandle n)
+{
+    ros::ServiceClient client = n.serviceClient<ur5_pkg::JacobianKinematic>("JacobianKinematic");
+    ur5_pkg::JacobianKinematic srv;
+
+    //Passing data to the service
+    srv.request.input = 1.0;
+
+    if (client.call(srv))
+    {
+        cout << RED << "Jacobian output: " << srv.response.output << NC <<endl;
     }
     else
     {
@@ -118,6 +140,7 @@ int main (int argc, char **argv)
         call_fk_service(nodeHandle);
         //TODO: check errors
         call_ik_service(nodeHandle);
+        call_jk_service(nodeHandle);
         loop_rate.sleep();
     }
 
