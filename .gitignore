@@ -1,7 +1,9 @@
 # ignore build folder 
 build
 # ignore devel folder
-devel
+# devel
+# ignore logs folder
+logs
 #ignore .vscode folders
 /src/**/.vscode
 .vscode

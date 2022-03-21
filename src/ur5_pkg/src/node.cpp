@@ -9,19 +9,19 @@
  * 
  */
 
-#include <ros/ros.h>
 #include <utils.hpp>
 
 #include <control_msgs/JointControllerState.h>
 #include <stdio.h>
 #include <ur5_pkg/ForwardKinematic.h>
+#include <ur5_pkg/InverseKinematic.h>
 
 #define DEBUG 1 /**< used for debug print*/
 
-#define LOOP_RATE_FREQUENCY 10  /**< used to set run loops frequency*/
+#define LOOP_RATE_FREQUENCY 0.5  /**< used to set run loops frequency*/
 
 static vector<ros::Subscriber> subscribers(JOINT_NUM); /**< global subscribers vector*/
-static double jointState[JOINT_NUM]; /**< contains all /state values of the joints*/
+static vector<double> jointState(JOINT_NUM); /**< contains all /state values of the joints*/
 
 void get_position_shoulder_pan(const control_msgs::JointControllerState::ConstPtr& ctr_msg) {jointState[0] = ctr_msg->process_value;}
 void get_position_shoulder_lift(const control_msgs::JointControllerState::ConstPtr& ctr_msg) {jointState[1] = ctr_msg->process_value;}
@@ -51,10 +51,10 @@ void set_subscribers(ros::NodeHandle n)
 bool call_fk_service(ros::NodeHandle n)
 {
     //<ForwardKinematic> defines the type of the service (.srv), "ForwardKinematc" is the name (defined in .cpp)
-    ros::ServiceClient client = n.serviceClient<ur5_pkg::ForwardKinematic>("ForwardKinematc");
+    ros::ServiceClient client = n.serviceClient<ur5_pkg::ForwardKinematic>("ForwardKinematic");
     ur5_pkg::ForwardKinematic srv;
 
-    //Coping data
+    //Passing data to the service
     srv.request.theta0 = jointState[0];
     srv.request.theta1 = jointState[1];
     srv.request.theta2 = jointState[2];
@@ -62,18 +62,35 @@ bool call_fk_service(ros::NodeHandle n)
     srv.request.theta4 = jointState[4];
     srv.request.theta5 = jointState[5];
 
-    cout << BLUE << "Joint: " << NC << " [ ";
-    for(auto foo : jointState)
-        cout << foo << " ";
-    cout << "]" << endl;
+    print_joints(jointState);
 
     if (client.call(srv))
     {
-        cout << BLUE << "Position : " << NC << " [";
-        cout << GREEN << " X" << NC << " -> " << YELLOW << srv.response.x << NC << "; "; 
-        cout << GREEN << "Y" << NC << " -> " << YELLOW << srv.response.y << NC << "; ";
-        cout << GREEN << "Z" << NC << " -> " << YELLOW << srv.response.z << NC << "; ] ";
-        cout << endl;
+        print_position(srv.response.x,srv.response.y,srv.response.z);
+    }
+    else
+    {
+        ROS_ERROR("Failed to call service\n");
+        return false;
+    }
+
+    return true;
+}
+
+bool call_ik_service(ros::NodeHandle n)
+{
+    ros::ServiceClient client = n.serviceClient<ur5_pkg::InverseKinematic>("InverseKinematic");
+    ur5_pkg::InverseKinematic srv;
+
+    //Passing data to the service
+    srv.request.x = 1.0;
+    srv.request.y = 2.0;
+    srv.request.z = 3.0;
+
+    if (client.call(srv))
+    {
+        cout<<"Inverse kinematic joints: "<<endl;
+        print_joints(jointState);
     }
     else
     {
@@ -99,10 +116,9 @@ int main (int argc, char **argv)
     {
         ros::spinOnce();
         call_fk_service(nodeHandle);
+        //TODO: check errors
+        call_ik_service(nodeHandle);
         loop_rate.sleep();
-
-        //Sleeping for 5 sec
-        sleep(5);
     }
 
     ROS_ERROR("Ros not working\n");

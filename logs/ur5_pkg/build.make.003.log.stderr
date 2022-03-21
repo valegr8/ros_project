@@ -1,8 +1,0 @@
-[01m[K/home/ubuntu/ros_project/src/ur5_pkg/src/node.cpp:[m[K In function ‘[01m[Kint call_fk_service(ros::NodeHandle)[m[K’:
-[01m[K/home/ubuntu/ros_project/src/ur5_pkg/src/node.cpp:67:20:[m[K [01;31m[Kerror: [m[Kbase operand of ‘[01m[K->[m[K’ is not a pointer
-   67 |         cout << foo[01;31m[K->[m[Kprocess_value << " ";
-      |                    [01;31m[K^~[m[K
-make[2]: *** [CMakeFiles/node.dir/build.make:63: CMakeFiles/node.dir/src/node.cpp.o] Error 1
-make[1]: *** [CMakeFiles/Makefile2:200: CMakeFiles/node.dir/all] Error 2
-make[1]: *** Waiting for unfinished jobs....
-make: *** [Makefile:141: all] Error 2

@@ -62,6 +62,7 @@ find_package (Eigen3 REQUIRED)
  add_service_files(
    FILES
    ForwardKinematic.srv
+   InverseKinematic.srv
  )
  
  ## Generate actions in the 'action' folder
@@ -142,6 +143,7 @@ find_package (Eigen3 REQUIRED)
 # add_executable(${PROJECT_NAME}_code_node src/code_node.cpp)
 add_executable(node src/node.cpp)
 add_executable(forward_kinematic src/forward_kinematic.cpp)
+add_executable(inverse_kinematic src/inverse_kinematic.cpp)
 
  
  ## Rename C++ executable without prefix
@@ -155,12 +157,9 @@ add_executable(forward_kinematic src/forward_kinematic.cpp)
  # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
  
  ## Specify libraries to link a library or executable target against
- target_link_libraries(node
-   ${catkin_LIBRARIES}
- )
- target_link_libraries(forward_kinematic
-   ${catkin_LIBRARIES}
- )
+target_link_libraries(node ${catkin_LIBRARIES})
+target_link_libraries(forward_kinematic ${catkin_LIBRARIES})
+target_link_libraries(inverse_kinematic ${catkin_LIBRARIES})
  
  #############
  ## Install ##

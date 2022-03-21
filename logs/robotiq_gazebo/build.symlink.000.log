@@ -1,5 +1,0 @@
-Symlinking /home/ubuntu/ros_project/devel/lib/libgazebo_mimic_joint_plugin.so
-Symlinking /home/ubuntu/ros_project/devel/lib/libgazebo_disable_link_plugin.so
-Symlinking /home/ubuntu/ros_project/devel/lib/pkgconfig/robotiq_gazebo.pc
-Symlinking /home/ubuntu/ros_project/devel/share/robotiq_gazebo/cmake/robotiq_gazeboConfig.cmake
-Symlinking /home/ubuntu/ros_project/devel/share/robotiq_gazebo/cmake/robotiq_gazeboConfig-version.cmake
