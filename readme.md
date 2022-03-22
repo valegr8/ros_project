@@ -8,3 +8,5 @@ Per avviare il file cpp:
 
 	source devel/setup.bash	
 	rosrun ur5_pkg node
+
+P.S. Usare catkin build è preferibile
