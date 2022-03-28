@@ -12,28 +12,30 @@
 #ifndef UTIlS_HPP
 #define UTIlS_HPP
 
-#include <vector>
-#include <iostream>
-#include <iomanip>
-#include <fstream>
-#include <stack>
-#include <algorithm>
-#include <set>
-#include <limits>
-#include <unordered_set>
-#include <cmath>
-#include <string>
-#include <chrono>
-#include <thread>
+#include <iostream> //input/output stream
+#include <fstream> //file stream
+#include <string> //string types
+#include <utility> //pair, make_pair, swap
+#include <vector> //vector
+#include <cmath> //math functions
+#include <limits> //numeric_limits
+#include <algorithm> //min, max, sort, search
+#include <csignal> //signal
+#include <chrono> //millisecond
+#include <thread> //thread
 
-#include <ros/ros.h>
-#include <eigen3/Eigen/Core>
+#include <ros/ros.h> //ros header
+#include <control_msgs/JointControllerState.h> //Control messages
+
+#include <eigen3/Eigen/Core>//Eigen3 header - for matrix calculation
 #include <eigen3/Eigen/Dense>
 
-#include <signal.h>
+/*
+#include <iomanip>
 #include <stdlib.h>
 #include <stdio.h>
-#include <control_msgs/JointControllerState.h>
+*/
+
 
 using namespace Eigen;
 using namespace std;
