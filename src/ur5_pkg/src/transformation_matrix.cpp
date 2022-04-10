@@ -1,23 +1,15 @@
 /**
- * @file trasformation_matrix.hpp
+ * @file transformation_matrix.cpp
  * @author your name (you@domain.com)
  * @brief 
  * @version 0.1
- * @date 2022-03-21
+ * @date 2022-04-10
  * 
  * @copyright Copyright (c) 2022
  * 
  */
 
-#include <utils.hpp>
-
-Matrix4ld transform10(long double);
-Matrix4ld transform21(long double);
-Matrix4ld transform32(long double);
-Matrix4ld transform43(long double);
-Matrix4ld transform54(long double);
-Matrix4ld transform65(long double);
-
+#include <ur5_pkg/transformation_matrix.h>
 
 Matrix4ld transform10(long double theta_0)
 {

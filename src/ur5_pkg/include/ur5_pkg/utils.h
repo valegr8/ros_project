@@ -1,5 +1,5 @@
 /**
- * @file utils.hpp
+ * @file utils.h
  * @author your name (you@domain.com)
  * @brief 
  * @version 0.1
@@ -9,8 +9,8 @@
  * 
  */
 
-#ifndef UTIlS_HPP
-#define UTIlS_HPP
+#ifndef UTIlS_H
+#define UTIlS_H
 
 #include <iostream> //input/output stream
 #include <fstream> //file stream
@@ -29,12 +29,6 @@
 
 #include <eigen3/Eigen/Core>//Eigen3 header - for matrix calculation
 #include <eigen3/Eigen/Dense>
-
-/*
-#include <iomanip>
-#include <stdlib.h>
-#include <stdio.h>
-*/
 
 
 using namespace Eigen;
@@ -64,38 +58,9 @@ const vector<double> Ai = {0.0, -0.425, -0.39225, 0.0, 0.0, 0.0};   //< Vector t
 const vector<double> ALPHAi = {PI/2, 0.0, 0.0, PI/2, -PI/2, 0.0};   //< Vector that contains alpha values for ur5, used for kinematic
 const vector<double> Di = {0.089159, 0.0, 0.0, 0.10915, 0.09465, 0.0823};   //< Vector that contains d values for ur5, used for kinematic
 
-bool debug = true;
+// bool debug = true;
 
 void print_position(long double, long double, long double);
 void print_joints(vector<long double>);
 
-/**
- * @brief utility function that prints the given position
- * 
- * @param x 
- * @param y 
- * @param z 
- */
-void print_position(long double x, long double y, long double z)
-{
-    cout << BLUE << "Position " << NC << "( x y z ) : [ ";
-    cout << YELLOW << x << NC << ", "; 
-    cout << YELLOW << y << NC << ", ";
-    cout << YELLOW << z << NC << " ] ";
-    cout << endl;
-}
-
-/**
- * @brief utility function that prints the given values of the joints
- * 
- * @param joints vector
- */
-void print_joints(vector<long double> joints)
-{
-    cout << BLUE << "Joints: " << NC << " [ ";
-    for(auto it : joints)
-        cout << it << " ";
-    cout << "]" << endl;
-}
-
-#endif  //UTILS_HPP
+#endif  //UTILS_H

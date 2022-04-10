@@ -59,12 +59,12 @@ find_package (Eigen3 REQUIRED)
 
  
  ## Generate services in the 'srv' folder
- add_service_files(
-   FILES
-   ForwardKinematic.srv
-   InverseKinematic.srv
-   JacobianKinematic.srv
- )
+#  add_service_files(
+#    FILES
+#    ForwardKinematic.srv
+#    InverseKinematic.srv
+#    JacobianKinematic.srv
+#  )
  
  ## Generate actions in the 'action' folder
  # add_action_files(
@@ -74,10 +74,10 @@ find_package (Eigen3 REQUIRED)
  # )
  
  ## Generate added messages and services with any dependencies listed here
- generate_messages(
-   DEPENDENCIES
-   std_msgs
- )
+#  generate_messages(
+#    DEPENDENCIES
+#    std_msgs
+#  )
  
  
  ################################################
@@ -110,7 +110,7 @@ find_package (Eigen3 REQUIRED)
  ## CATKIN_DEPENDS: catkin_packages dependent projects also need
  ## DEPENDS: system dependencies of this project that dependent projects also need
  catkin_package(
-#  INCLUDE_DIRS include
+   INCLUDE_DIRS include
 #  LIBRARIES eigen_example
    CATKIN_DEPENDS roscpp std_msgs #message_runtime
 #  DEPENDS system_lib
@@ -142,10 +142,14 @@ find_package (Eigen3 REQUIRED)
  ## With catkin_make all packages are built within a single CMake context
  ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_code_node src/code_node.cpp)
-add_executable(node src/node.cpp)
-add_executable(forward_kinematic src/forward_kinematic.cpp)
-add_executable(inverse_kinematic src/inverse_kinematic.cpp)
-add_executable(jacobian_kinematic src/jacobian_kinematic.cpp)
+add_executable(node 
+              src/node.cpp
+              src/forward_kinematic.cpp
+              src/inverse_kinematic.cpp
+              src/diff_kinematic.cpp
+              src/transformation_matrix.cpp
+              src/utils.cpp
+              )
  
  ## Rename C++ executable without prefix
  ## The above recommended prefix causes long target names, the following renames the
@@ -159,9 +163,6 @@ add_executable(jacobian_kinematic src/jacobian_kinematic.cpp)
  
  ## Specify libraries to link a library or executable target against
 target_link_libraries(node ${catkin_LIBRARIES})
-target_link_libraries(forward_kinematic ${catkin_LIBRARIES})
-target_link_libraries(inverse_kinematic ${catkin_LIBRARIES})
-target_link_libraries(jacobian_kinematic ${catkin_LIBRARIES})
  
  #############
  ## Install ##
