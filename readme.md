@@ -1,12 +1,9 @@
-Per far partire Gazebo ed il robot:
+To launch Gazebo:
 
-	catkin_make OPPURE catkin build --env-cache
+	catkin_make
 	source devel/setup.bash
 	roslaunch ur5_pkg ur5_gripper.launch
 
-Per avviare il file cpp:
-
+To run our node in a new shell:
 	source devel/setup.bash	
 	rosrun ur5_pkg node
-
-P.S. Usare catkin build è preferibile
