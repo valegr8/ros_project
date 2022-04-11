@@ -12,6 +12,7 @@
 #include <ur5_pkg/transformation_matrix.h>
 #include <ur5_pkg/kinematics.h>
 #include <ur5_pkg/utils.h>
+#include "std_msgs/Float64.h"
 
 #define LOOP_RATE_FREQUENCY 0.5  /**< used to set run loops frequency*/
 
@@ -19,6 +20,7 @@
  /* GLOBAL VARIABLES */
  /********************/
 vector<ros::Subscriber> subscribers(JOINT_NUM); /**< global subscribers vector*/
+vector<ros::Publisher> publishers(JOINT_NUM);  /**< global publisher vector*/
 vector<long double> jointState(JOINT_NUM); /**< contains all /state values of the joints*/
 
  /********************/
@@ -42,6 +44,29 @@ static void set_subscribers(ros::NodeHandle n)
     subscribers[5] = n.subscribe("/wrist_3_joint_position_controller/state", queue_size, get_position_wrist_3);
 }
 
+static void set_publishers(ros::NodeHandle n){
+    publishers[0] = n.advertise<std_msgs::Float64>("/shoulder_pan_joint_position_controller/command", 1000);
+	publishers[1] = n.advertise<std_msgs::Float64>("/shoulder_lift_joint_position_controller/command", 1000);
+	publishers[2] = n.advertise<std_msgs::Float64>("/elbow_joint_position_controller/command", 1000);
+	publishers[3] = n.advertise<std_msgs::Float64>("/wrist_1_joint_position_controller/command", 1000);
+	publishers[4] = n.advertise<std_msgs::Float64>("/wrist_2_joint_position_controller/command", 1000);
+	publishers[5] = n.advertise<std_msgs::Float64>("/wrist_3_joint_position_controller/command", 1000);
+}
+
+void set_positions(Matrix86ld positions)
+{
+    vector<std_msgs::Float64> theta(JOINT_NUM);
+
+    for(int i = 0; i < JOINT_NUM; i++)
+    {
+        theta[i].data = positions(0, i);
+        publishers[i].publish(theta[i]);
+        ros::spinOnce();
+    }    
+
+    return;
+}
+
 
 int main (int argc, char **argv)
 {
@@ -52,7 +77,8 @@ int main (int argc, char **argv)
     ros::Rate loop_rate(LOOP_RATE_FREQUENCY);
 
     set_subscribers(nodeHandle);
-     
+    set_publishers(nodeHandle);     
+
     //test_function
     while(ros::ok())
     {
@@ -74,6 +100,28 @@ int main (int argc, char **argv)
 
         loop_rate.sleep();
         sleep(3);
+
+        /*test for the robot movement*/
+        Vector3ld point;
+        long double x,y,z;
+        cout << "Robot movement..." << endl;
+        cout << "X: ";
+        cin >> x;
+        cout << "Y: ";
+        cin >> y;
+        cout << "Z: ";
+        cin >> z;
+        point(0) = x;
+        point(1) = y;
+        point(2) = z;
+        cout << "Moving the robot to the (X,Y,Z) position: " << x << "," << y <<"," <<z << endl;
+        set_positions(computeInverseKinematics(point, computeForwardKinematics(jointState).second));
+
+        loop_rate.sleep();
+        sleep(1);
+
+
+
     }
 
     ROS_ERROR("Ros not working\n");
