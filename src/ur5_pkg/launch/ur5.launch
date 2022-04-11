@@ -25,8 +25,12 @@
         -param robot_description 
         -model robot 
         -z 1.02 
+        -J shoulder_pan_joint 0
         -J shoulder_lift_joint -1.5 
         -J elbow_joint 1.0
+        -J wrist_1_joint 0
+        -J wrist_2_joint 0
+        -J wrist_3_joint 0
         -unpause" 
         respawn="false" 
         output="screen" />

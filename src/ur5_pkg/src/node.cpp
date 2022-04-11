@@ -88,14 +88,12 @@ int main (int argc, char **argv)
     set_subscribers(nodeHandle);
     set_publishers(nodeHandle);     
 
-    jointState = {0, -1.5, 1, 0, 0, 0};
-
     //just the first time, to set the initial position of the robot
     if(ros::ok())
     {
+        ros::spinOnce();
         print_joints(jointState);
         forward = computeForwardKinematics(jointState);
-        forward.second = euler2matrix(-3.104627, 0.555664, -3.065271);
         Vector3ld ea = matrix2euler(forward.second);
         cout << BLUE << "Roll Pitch Yaw angles: " << NC << endl << ea << endl;
         inverse = computeInverseKinematics(forward.first, forward.second);
@@ -113,7 +111,6 @@ int main (int argc, char **argv)
         
         forward = computeForwardKinematics(jointState);
         print_position(forward.first(0), forward.first(1), forward.first(2));
-        //forward.second = euler2matrix(-3.104627, 0.555664, -3.065271);
         Vector3ld ea = matrix2euler(forward.second);
         cout << BLUE << "Roll Pitch Yaw angles: " << NC << endl << ea << endl;
 
@@ -139,6 +136,7 @@ int main (int argc, char **argv)
         set_joint_values(inverse.row(0)); //gets the first row of the inverse matrix
 
         loop_rate.sleep();
+        ros::spinOnce();
     }
 
     ROS_ERROR("Ros not working\n");
