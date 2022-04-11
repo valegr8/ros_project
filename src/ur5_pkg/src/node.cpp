@@ -24,6 +24,7 @@ static vector<ros::Publisher> publishers(JOINT_NUM);  /**< global publisher vect
 static vector<long double> jointState(JOINT_NUM); /**< contains all /state values of the joints*/
 static int queue_size; /**< used for publisher and subscribers queue size */
 
+
  /********************/
  /* STATIC FUNCTIONS */
  /********************/
@@ -59,15 +60,24 @@ static void set_publishers(ros::NodeHandle n)
  * 
  * @param joint_values 
  */
-void set_joint_values(MatrixXld positions)
+void set_joint_values(vector<long double> positions)
 {
     vector<std_msgs::Float64> theta(JOINT_NUM);
+    
+    cout << MAGENTA << "[set_joint_values] Publishing values..." << endl;
 
     for(int i = 0; i < JOINT_NUM; i++)
     {
-        theta[i].data = positions(i);
+        while (publishers[i].getNumSubscribers() < 1) {
+            ros::WallDuration sleep_t(0.5);    
+            sleep_t.sleep();
+        }
+        // After connection are guaranteed to be established, we can publish messages now.
+        theta[i].data = positions[i];
+        cout << "[set_joint_values] " << positions[i] << endl;
         publishers[i].publish(theta[i]);
-        ros::spinOnce();
+        //ros::spinOnce();
+        sleep(3);
     }    
 }
 
@@ -79,43 +89,43 @@ int main (int argc, char **argv)
     Matrix6ld jacobian;
     Vector3ld position;
 
-    cout << "Starting ROS\n";
+    cout << "[main] Starting ROS node...\n";
 
     ros::init(argc, argv, "node");
     ros::NodeHandle nodeHandle;
+
     ros::Rate loop_rate(LOOP_RATE_FREQUENCY);
 
     set_subscribers(nodeHandle);
     set_publishers(nodeHandle);     
 
+    loop_rate.sleep();
+
     //just the first time, to set the initial position of the robot
     if(ros::ok())
     {
+        jointState = {0, -1.5, 1, 0, 0, 0};
+        set_joint_values(jointState);
+        
         ros::spinOnce();
-        print_joints(jointState);
-        forward = computeForwardKinematics(jointState);
-        Vector3ld ea = matrix2euler(forward.second);
-        cout << BLUE << "Roll Pitch Yaw angles: " << NC << endl << ea << endl;
-        inverse = computeInverseKinematics(forward.first, forward.second);
-        cout << BLUE << "Inverse Kinematic Matrix: " << NC << endl << inverse << endl;
-        set_joint_values(inverse.row(0));
-        cout << "-------------------" << endl;
-        ros::spinOnce();
+        loop_rate.sleep();
     }
 
     while(ros::ok())
     {
+        loop_rate.sleep();
         ros::spinOnce();
+        loop_rate.sleep();
         
         print_joints(jointState);
         
         forward = computeForwardKinematics(jointState);
         print_position(forward.first(0), forward.first(1), forward.first(2));
         Vector3ld ea = matrix2euler(forward.second);
-        cout << BLUE << "Roll Pitch Yaw angles: " << NC << endl << ea << endl;
+        cout << BLUE << "[main] Roll Pitch Yaw - eluler angles: " << NC << endl << ea << endl;
 
         inverse = computeInverseKinematics(forward.first, forward.second);
-        cout << BLUE << "Inverse Kinematic Matrix: " << NC << endl << inverse << endl;
+        cout << BLUE << "[main] Inverse Kinematic Matrix: " << NC << endl << inverse << endl;
 
         // jacobian = computeJacobian(jointState);
         // cout << BLUE << "Jacobian matrix: " << NC << endl << jacobian << endl;
@@ -123,22 +133,26 @@ int main (int argc, char **argv)
         cout << endl << MAGENTA << "----------------------------------------------------------" << NC << endl << endl;
 
         /*test for the robot movement*/        
-        cout << "Robot movement..." << endl;
+        cout << "[main] Robot movement, please insert x y z values..." << endl;
         cout << "X: ";
         cin >> position(0);
         cout << "Y: ";
         cin >> position(1);
         cout << "Z: ";
         cin >> position(2);
-        cout << "Moving the robot to the (X,Y,Z) position: \n" << GREEN << position << NC << endl;
-        inverse = computeInverseKinematics(position, forward.second);
-        cout << BLUE << "Inverse Kinematic Matrix: " << MAGENTA << endl << inverse << endl;
-        set_joint_values(inverse.row(0)); //gets the first row of the inverse matrix
+        cout << "[main] Moving robot in position..." << endl << GREEN << position << NC << endl;
 
+        inverse = computeInverseKinematics(position, computeForwardKinematics(jointState).second);
+        
+        Vector6ld theta = inverse.row(0);
+        cout << BLUE << "[main] Desired joint_values: " << MAGENTA << endl << theta << NC << endl;
+        vector<long double> tmp {theta.data(), theta.data() + theta.size()}; //gets the first row of the inverse matrix
+        set_joint_values(tmp); 
+
+        sleep(2);
         loop_rate.sleep();
-        ros::spinOnce();
     }
 
-    ROS_ERROR("Ros not working\n");
+    ROS_ERROR("[main] Ros not working\n");
     return -1; 
 }
