@@ -39,3 +39,31 @@ void print_joints(vector<long double> joints)
         cout << it << " ";
     cout << "]" << endl;
 }
+
+/**
+ * @brief convertion from euler angles to rotation matrix
+ * 
+ */
+Matrix3ld euler2matrix(long double roll, long double pitch, long double yaw)
+{
+    AngleAxis<long double> rollAngle(roll, Vector3ld::UnitZ());
+    AngleAxis<long double> yawAngle(yaw, Vector3ld::UnitY());
+    AngleAxis<long double> pitchAngle(pitch, Vector3ld::UnitX());
+
+    Eigen::Quaternion<long double> q = rollAngle * yawAngle * pitchAngle;
+
+    Matrix3ld rotationMatrix = q.matrix();
+
+    return rotationMatrix;
+}
+
+/**
+ * @brief convertion from rotation matrix to euler angle
+ * 
+ * @param m rotation matrix
+ * @return Vector3ld euler angles, roll pith yaw
+ */
+Vector3ld matrix2euler(Matrix3ld m) 
+{
+    return m.eulerAngles(0, 1, 2);
+}

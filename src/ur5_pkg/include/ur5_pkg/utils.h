@@ -40,6 +40,7 @@ typedef Matrix<long double, 3, 3> Matrix3ld; // 3x3 matrix
 typedef Matrix<long double, 8, 6> Matrix86ld; // 8x6 matrix
 typedef Matrix<long double, 3, 1> Vector3ld;  // row vector 3x1
 typedef Matrix<long double, 4, 1> Vector4ld; // row  vector 4x1
+typedef Matrix<long double, 6, 1> Vector6ld; // row  vector 6x1
 typedef Matrix<long double, Dynamic, Dynamic> MatrixXld; // dynamic matrix
 
 const int JOINT_NUM = 6; //number of joint for ur5
@@ -62,5 +63,7 @@ const vector<double> Di = {0.089159, 0.0, 0.0, 0.10915, 0.09465, 0.0823};   //< 
 
 void print_position(long double, long double, long double);
 void print_joints(vector<long double>);
+Matrix3ld euler2matrix(long double roll, long double pitch, long double yaw);
+Vector3ld matrix2euler(Matrix3ld m);
 
 #endif  //UTILS_H
