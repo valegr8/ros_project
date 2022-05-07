@@ -76,8 +76,8 @@ void set_joint_values(vector<long double> positions)
         theta[i].data = positions[i];
         cout << "[set_joint_values] " << positions[i] << endl;
         publishers[i].publish(theta[i]);
-        //ros::spinOnce();
-        sleep(3);
+        ros::spinOnce();
+        
     }    
 }
 
@@ -149,7 +149,7 @@ int main (int argc, char **argv)
         vector<long double> tmp {theta.data(), theta.data() + theta.size()}; //gets the first row of the inverse matrix
         set_joint_values(tmp); 
 
-        sleep(2);
+        sleep(1);
         loop_rate.sleep();
     }
 
