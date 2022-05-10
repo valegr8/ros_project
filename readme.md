@@ -1,6 +1,6 @@
 To launch Gazebo:
 
-	catkin_make
+	catkin_make OPPURE catkin build --env-cache
 	source devel/setup.bash
 	roslaunch ur5_pkg ur5_gripper.launch
 
