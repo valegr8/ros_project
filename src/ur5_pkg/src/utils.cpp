@@ -11,6 +11,8 @@
 
 #include <ur5_pkg/utils.h>
 
+
+
 /**
  * @brief utility function that prints the given position
  * 
@@ -20,11 +22,24 @@
  */
 void print_position(long double x, long double y, long double z)
 {
-    cout << BLUE << "Position " << NC << "( x y z ) : [ ";
+    cout << BLUE << "Position ( x y z ) : " << NC << "[ ";
     cout << YELLOW << x << NC << ", "; 
     cout << YELLOW << y << NC << ", ";
     cout << YELLOW << z << NC << " ] ";
     cout << endl;
+}
+
+/**
+ * @brief utility function that prints the given euler angles
+ * 
+ * @param euler_angles
+ */
+void print_eluler_angles(Vector3ld ea)
+{
+    cout << BLUE << "Eluler angles - Roll(z) Pitch(y) Yaw(x): " << NC << "[ ";
+    cout << ea(0) << ", ";
+    cout << ea(1) << ", ";
+    cout << ea(2) << " ]" << endl;
 }
 
 /**
@@ -35,6 +50,19 @@ void print_position(long double x, long double y, long double z)
 void print_joints(vector<long double> joints)
 {
     cout << BLUE << "Joints: " << NC << " [ ";
+    for(auto it : joints)
+        cout << it << " ";
+    cout << "]" << endl;
+}
+
+/**
+ * @brief utility function that prints the given desidered values of the joints
+ * 
+ * @param joints vector
+ */
+void print_desidered_joints(Vector6ld joints)
+{
+    cout << BLUE << "Desired joint values: " << NC << " [ ";
     for(auto it : joints)
         cout << it << " ";
     cout << "]" << endl;
@@ -67,3 +95,4 @@ Vector3ld matrix2euler(Matrix3ld m)
 {
     return m.eulerAngles(0, 1, 2);
 }
+

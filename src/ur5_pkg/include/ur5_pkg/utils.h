@@ -30,6 +30,8 @@
 #include <eigen3/Eigen/Core>//Eigen3 header - for matrix calculation
 #include <eigen3/Eigen/Dense>
 
+#include <std_msgs/Float64.h>
+
 
 using namespace Eigen;
 using namespace std;
@@ -59,11 +61,12 @@ const vector<double> Ai = {0.0, -0.425, -0.39225, 0.0, 0.0, 0.0};   //< Vector t
 const vector<double> ALPHAi = {PI/2, 0.0, 0.0, PI/2, -PI/2, 0.0};   //< Vector that contains alpha values for ur5, used for kinematic
 const vector<double> Di = {0.089159, 0.0, 0.0, 0.10915, 0.09465, 0.0823};   //< Vector that contains d values for ur5, used for kinematic
 
-// bool debug = true;
-
 void print_position(long double, long double, long double);
+void print_eluler_angles(Vector3ld);
 void print_joints(vector<long double>);
+void print_desidered_joints(Vector6ld);
 Matrix3ld euler2matrix(long double roll, long double pitch, long double yaw);
 Vector3ld matrix2euler(Matrix3ld m);
+
 
 #endif  //UTILS_H
