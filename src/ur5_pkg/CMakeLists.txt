@@ -148,6 +148,7 @@ add_executable(node
               src/inverse_kinematic.cpp
               src/diff_kinematic.cpp
               src/transformation_matrix.cpp
+              src/motionplan.cpp
               src/utils.cpp
               )
  
