@@ -19,6 +19,23 @@ bool debug = true;
 
 int main (int argc, char **argv)
 {
+    pair<Vector3ld, Matrix3ld> start;
+    pair<Vector3ld, Matrix3ld> end;
+    start.first = {0.3000, 0.3000, 0.1000};
+    end.first = {0.5000, 0.5000, 0.5000};
+    start.second = euler2matrix(0.0000, 0.0000, 0.0000);
+    end.second = euler2matrix(0.7854, 0.7854, 0.7854);
+
+    cout << start.first << endl << start.second << endl << endl;
+    cout << end.first << endl << end.second << endl << endl;
+
+    tuple<MatrixXld, MatrixXld, MatrixXld> foo = p2pMotionPlan(start, end, 0.0, 1.0, 0.01);
+
+    cout << "Th: " << endl << get<0>(foo) << endl;
+    cout << "xE: " << endl << get<1>(foo) << endl;
+    cout << "phiE: " << endl << get<2>(foo) << endl;
+
+    /*
     pair<Vector3ld, Matrix3ld> forward;
     Matrix86ld inverse;
     Matrix6ld jacobian;
@@ -60,7 +77,7 @@ int main (int argc, char **argv)
         //Printing informations about the robot
         print_robot_status();
 
-        /*test for the robot movement*/        
+        //test for the robot movement
         cout << "To move the robot please insert x y z values..." << endl;
         cout << "X: ";
         cin >> position(0);
@@ -91,6 +108,7 @@ int main (int argc, char **argv)
 
     ROS_ERROR("Ros not working\n");
     return 1; 
+    */
 }
 
 /**
