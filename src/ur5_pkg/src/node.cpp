@@ -19,28 +19,6 @@ bool debug = true;
 
 int main (int argc, char **argv)
 {
-    pair<Vector3ld, Matrix3ld> start;
-    pair<Vector3ld, Matrix3ld> end;
-    start.first = {0.3000, 0.3000, 0.1000};
-    end.first = {0.5000, 0.5000, 0.5000};
-    start.second = euler2matrix(0.0000, 0.0000, 0.0000);
-    end.second = euler2matrix(0.7854, 0.7854, 0.7854);
-
-    cout << start.first << endl << start.second << endl << endl;
-    cout << end.first << endl << end.second << endl << endl;
-
-    tuple<MatrixXld, MatrixXld, MatrixXld> foo = p2pMotionPlan(start, end, 0.0, 1.0, 0.01);
-
-    cout << "Th: " << endl << get<0>(foo) << endl;
-    cout << "xE: " << endl << get<1>(foo) << endl;
-    cout << "phiE: " << endl << get<2>(foo) << endl;
-
-    /*
-    pair<Vector3ld, Matrix3ld> forward;
-    Matrix86ld inverse;
-    Matrix6ld jacobian;
-    Vector3ld position;
-
     cout << BLUE << "Starting ROS node..." << NC;
 
     ros::init(argc, argv, "node");
@@ -66,7 +44,10 @@ int main (int argc, char **argv)
     }
 
     cout << endl << "----------------------------------------------------------" << endl << endl;
+
+
     //Now we start
+    pair<Vector3ld, Matrix3ld> to; //Per la posizione finale
 
     while(ros::ok())
     {
@@ -80,25 +61,23 @@ int main (int argc, char **argv)
         //test for the robot movement
         cout << "To move the robot please insert x y z values..." << endl;
         cout << "X: ";
-        cin >> position(0);
+        cin >> to.first(0);
         cout << "Y: ";
-        cin >> position(1);
+        cin >> to.first(1);
         cout << "Z: ";
-        cin >> position(2);
-        cout << BLUE << "Moving robot to position: " << NC << "[ " << position(0) << ", " << position(1) << ", " << position(2) << " ]" << endl;
+        cin >> to.first(2);
+        cout << BLUE << "Moving robot to position: " << NC << "[ " << to.first(0) << ", " << to.first(1) << ", " << to.first(2) << " ]" << endl;
 
-        inverse = computeInverseKinematics(position, computeForwardKinematics(jointState).second);
-        cout << BLUE << "Inverse Kinematic Matrix: " << NC << endl << inverse << endl;
+        //Temporaneamente prendo la rotazione dell'end effector attuale
+        to.second = computeForwardKinematics(jointState).second;
+         
+        //Copio la posizione dei joint
+        //Vector6ld thetaJoint(jointState.data());
 
-        // jacobian = computeJacobian(jointState);
-        // cout << BLUE << "Jacobian matrix: " << NC << endl << jacobian << endl;
-        
-        Vector6ld theta = inverse.row(0);
-        //NON E' DETTO
-
-        print_desidered_joints(theta);
-        vector<long double> tmp {theta.data(), theta.data() + theta.size()}; //gets the first row of the inverse matrix
-        set_joint_values(tmp); 
+        if(moveTo(Vector6ld (jointState.data()), to))
+            cout << GREEN << "[ DONE ]" << NC << endl;
+        else
+            cout << RED << "[ FAILED ]" << NC << endl;
 
         cout << endl << "----------------------------------------------------------" << endl << endl;
 
@@ -108,7 +87,59 @@ int main (int argc, char **argv)
 
     ROS_ERROR("Ros not working\n");
     return 1; 
-    */
+    
+}
+
+/**
+ * @brief Move to a specific position with p2pMotionPlan
+ * 
+ * @param jointsActualState
+ * @param endPosition
+ */
+bool moveTo(Vector6ld start, pair<Vector3ld, Matrix3ld> end)
+{
+    //Computing the movement
+    MatrixXld th = get<0>(p2pMotionPlan_(start, end, 0.0, 1.0, 0.01));
+
+    //Mandatory to public
+    vector<std_msgs::Float64> theta(6);
+
+    for(int i = 0; i < th.rows(); i++)
+    {
+        //cout << th(i, 0) << " ";
+        for(int j = 0; j < 6; j++)
+        {
+            //Check for errors
+            if(isnan(th(i, j+1)))
+                return false;
+
+            //Copy data
+            theta[j].data = fmod(th(i, j+1), PI);
+
+            //cout << theta[j].data << " ";
+
+            //Wait for connections
+            while (publishers[j].getNumSubscribers() < 1) 
+            {
+                ros::WallDuration sleep_t(0.5);    
+                sleep_t.sleep();
+            }
+
+            //Now we can publish messages
+            publishers[j].publish(theta[j]);
+
+            //Just to be on the safe side
+            ros::spinOnce();
+            ros::spinOnce();
+            ros::spinOnce();
+            ros::spinOnce();
+            ros::spinOnce();
+            ros::spinOnce();
+        }
+        //cout << endl;
+    }
+
+    return true;
 }
 
 /**

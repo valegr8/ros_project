@@ -17,6 +17,6 @@
 pair<Vector3ld, Matrix3ld> computeForwardKinematics(vector<long double>);
 Matrix86ld computeInverseKinematics(Vector3ld, Matrix3ld);
 Matrix6ld computeJacobian(vector<long double>);
-tuple<MatrixXld, MatrixXld, MatrixXld> p2pMotionPlan(pair<Vector3ld, Matrix3ld>, pair<Vector3ld, Matrix3ld>, long double, long double, long double);
-    
+tuple<MatrixXld, MatrixXld, MatrixXld> p2pMotionPlan_(Vector6ld, pair<Vector3ld, Matrix3ld>, long double, long double, long double); 
+
 #endif //KINEMATICS_H

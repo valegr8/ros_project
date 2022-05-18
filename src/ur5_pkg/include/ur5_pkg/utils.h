@@ -32,7 +32,6 @@
 
 #include <std_msgs/Float64.h>
 
-
 using namespace Eigen;
 using namespace std;
 
