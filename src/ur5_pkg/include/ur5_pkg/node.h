@@ -42,6 +42,6 @@ static void set_subscribers(ros::NodeHandle);
 
 void print_robot_status();
 void set_joint_values(vector<long double>);
-bool moveTo(Vector6ld, pair<Vector3ld, Matrix3ld>);
+//bool moveTo(Vector6ld, pair<Vector3ld, Matrix3ld>);
 
 #endif  //NODE_H

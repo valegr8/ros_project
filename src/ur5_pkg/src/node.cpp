@@ -74,10 +74,12 @@ int main (int argc, char **argv)
         //Copio la posizione dei joint
         //Vector6ld thetaJoint(jointState.data());
 
+        /*
         if(moveTo(Vector6ld (jointState.data()), to))
             cout << GREEN << "[ DONE ]" << NC << endl;
         else
             cout << RED << "[ FAILED ]" << NC << endl;
+        */
 
         cout << endl << "----------------------------------------------------------" << endl << endl;
 
@@ -90,12 +92,7 @@ int main (int argc, char **argv)
     
 }
 
-/**
- * @brief Move to a specific position with p2pMotionPlan
- * 
- * @param jointsActualState
- * @param endPosition
- */
+/*
 bool moveTo(Vector6ld start, pair<Vector3ld, Matrix3ld> end)
 {
     //Computing the movement
@@ -141,6 +138,7 @@ bool moveTo(Vector6ld start, pair<Vector3ld, Matrix3ld> end)
 
     return true;
 }
+*/
 
 /**
  * @brief Set the new joint values according to the matrix given in input

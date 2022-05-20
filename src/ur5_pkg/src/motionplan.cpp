@@ -12,6 +12,7 @@
 #include <ur5_pkg/transformation_matrix.h>
 #include <ur5_pkg/kinematics.h>
 
+
 /**
  * @brief Coputing the movement to a specific position
  * 
@@ -21,6 +22,7 @@
  * @param maxT
  * @param deltaT
  */
+/*
 tuple<MatrixXld, MatrixXld, MatrixXld> p2pMotionPlan_(Vector6ld ik_start, pair<Vector3ld, Matrix3ld> end, long double minT, long double maxT, long double deltaT)
 {
     int matrixDimension = (int)round((maxT-minT)/deltaT) + 1;
@@ -76,6 +78,7 @@ tuple<MatrixXld, MatrixXld, MatrixXld> p2pMotionPlan_(Vector6ld ik_start, pair<V
     
    return make_tuple(Th, xE, phiE);
 }
+*/
 
 /*
 tuple<MatrixXld, MatrixXld, MatrixXld> p2pMotionPlan(pair<Vector3ld, Matrix3ld> start, pair<Vector3ld, Matrix3ld> end, long double minT, long double maxT, long double deltaT)
