@@ -143,13 +143,9 @@ find_package (Eigen3 REQUIRED)
  ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_code_node src/code_node.cpp)
 add_executable(node 
-              src/node.cpp
-              src/forward_kinematic.cpp
-              src/inverse_kinematic.cpp
-              src/diff_kinematic.cpp
-              src/transformation_matrix.cpp
-              src/motionplan.cpp
-              src/utils.cpp
+                src/node.cpp
+                src/kinematic.cpp
+                src/utils.cpp
               )
  
  ## Rename C++ executable without prefix
