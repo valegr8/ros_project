@@ -7,6 +7,7 @@
 #include <utility> //pair, make_pair, swap
 #include <vector> //vector
 #include <cmath> //math functions
+#include <complex> //complex numbers
 #include <limits> //numeric_limits
 #include <algorithm> //min, max, sort, search
 #include <csignal> //signal
@@ -41,7 +42,7 @@ typedef Matrix<long double, Dynamic, Dynamic> MatrixXld; // dynamic matrix
 
 //Definizioni costanti
 const int JOINT_NUM = 6; //number of joint for ur5
-const double LOOP_RATE_FREQUENCY = 0.5;  //< used to set run loops frequency
+const double LOOP_RATE_FREQUENCY = 10;  //< used to set run loops frequency
 const long double PI = 3.14159265359; //pi value
 const long double PIMEZZI = 1.57079632679; //pi/2 value
 const string GREEN = "\033[0;92m";
@@ -81,6 +82,7 @@ void set_publishers(ros::NodeHandle);
 void set_subscribers(ros::NodeHandle);
 
 //Cinematiche
+bool pointToPointMotionPlan(pair<Vector3ld, Matrix3ld>, ros::Rate&, long double, long double, long double);
 pair<Vector3ld, Matrix3ld> computeForwardKinematics(vector<long double>);
 Matrix86ld computeInverseKinematics(Vector3ld, Matrix3ld);
 Matrix6ld computeJacobian(vector<long double>);

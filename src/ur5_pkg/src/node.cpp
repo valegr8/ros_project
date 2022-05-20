@@ -20,10 +20,11 @@ int main (int argc, char **argv)
     ros::NodeHandle nodeHandle;
 
     ros::Rate loop_rate(LOOP_RATE_FREQUENCY);
-
+    
     set_subscribers(nodeHandle);
     set_publishers(nodeHandle);     
 
+    ros::spinOnce();
     loop_rate.sleep();
 
     cout << GREEN << " [ DONE ] " << endl;
@@ -69,12 +70,10 @@ int main (int argc, char **argv)
         //Copio la posizione dei joint
         //Vector6ld thetaJoint(jointState.data());
 
-        /*
-        if(moveTo(Vector6ld (jointState.data()), to))
+        if(pointToPointMotionPlan(to, loop_rate, 0.0, 1.0, 0.01))
             cout << GREEN << "[ DONE ]" << NC << endl;
         else
             cout << RED << "[ FAILED ]" << NC << endl;
-        */
 
         cout << endl << "----------------------------------------------------------" << endl << endl;
 

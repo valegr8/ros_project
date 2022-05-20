@@ -1,5 +1,65 @@
 #include "ur5_pkg/utils.h"
 
+bool pointToPointMotionPlan(pair<Vector3ld, Matrix3ld> end, ros::Rate& loop_rate, long double minT, long double maxT, long double deltaT)
+{
+    vector<std_msgs::Float64> theta(JOINT_NUM);//Mandatory to public
+    Matrix64ld A;//For next joint position
+
+    {
+        //Gets joints actual value
+        ros::spinOnce();
+        loop_rate.sleep();
+        Vector6ld ik_start(jointState.data());
+
+        //Inverting y
+        end.first(0) = -end.first(0);
+        end.first(1) = -end.first(1);
+        end.first(2) = end.first(2);
+
+        //Gets joints final value
+        Vector6ld ik_end = computeInverseKinematics(end.first, end.second).row(0);
+
+        Matrix4ld m 
+        {
+            {1.0, minT, pow(minT, 2.0), pow(minT, 3.0)},
+            {0.0, 1.0, 2*minT, 3*pow(minT, 2.0)},
+            {1.0, maxT, pow(maxT, 2.0), pow(maxT, 3.0)},
+            {0.0, 1.0, 2*maxT, 3*pow(maxT, 2.0)}
+        };
+        Matrix4ld mInverse = m.inverse();
+
+        for(int i = 0; i < JOINT_NUM; i++)
+        {       
+            Vector4ld b { ik_start(i), 0.0, ik_end(i), 0.0};
+            A.row(i) = mInverse * b;
+        }
+    }
+
+    for(long double t = minT; t < maxT + deltaT; t+=deltaT)
+    {           
+        //cout << t << " ";
+        //Compute the next position for all joints
+        for(int j = 0; j < JOINT_NUM; j++)
+        {
+            theta[j].data = fmod(A(j,0) + A(j,1)*t + A(j,2)*pow(t, 2) + A(j,3)*pow(t, 3), PI);
+            //Checking for NaN
+            if(isnan(theta[j].data))
+                return false;
+            //cout << theta[j].data << " ";
+        }
+        //cout << endl;
+        
+        //Public
+        for(int j = 0; j < JOINT_NUM; j++)
+            publishers[j].publish(theta[j]);
+
+        ros::spinOnce();
+        loop_rate.sleep();
+    }
+   
+   return true;
+}
+
 pair<Vector3ld, Matrix3ld> computeForwardKinematics(vector<long double> joint)
 {
     Matrix4ld matrix 
@@ -19,7 +79,7 @@ pair<Vector3ld, Matrix3ld> computeForwardKinematics(vector<long double> joint)
 
     return make_pair(
         Vector3ld {
-            matrix(0,3), matrix(1,3), matrix(2,3)
+            -matrix(0,3), -matrix(1,3), matrix(2,3)
         },     
         Matrix3ld { 
             {matrix(0,0), matrix(0,1), matrix(0,2)},
@@ -37,23 +97,25 @@ Matrix86ld computeInverseKinematics(Vector3ld p60, Matrix3ld r60)
         {r60(2, 0), r60(2, 1), r60(2, 2), p60(2, 0)},
         {0.0, 0.0, 0.0, 1.0}
     };
+
+    complex<long double> complexConverter(1.0,0.0);
     
     //theta 1
     long double theta_1_1, theta_1_2;
     {
         MatrixXld p50 = t60 * (MatrixXld(4,1) << 0.0, 0.0, -Di[5], 1.0 ).finished(); //p05 is a 4 x 1 matrix
-        long double phi_1 = atan2(p50(1), p50(0)); //atan2 is arctan(y/x), between [-PI, +PI] 
-        long double phi_2 = acos(Di[3]/hypot(p50(1), p50(0))); //hypot is sqrt(x^2 + y^2)
+        complex<long double> phi_1 = atan2(p50(1), p50(0))* complexConverter; //atan2 is arctan(y/x), between [-PI, +PI] 
+        complex<long double> phi_2 = acos(Di[3]/hypot(p50(1), p50(0))) * complexConverter; //hypot is sqrt(x^2 + y^2)
 
-        theta_1_1 = phi_1 + phi_2 + PIMEZZI;
-        theta_1_2 = phi_1 - phi_2 + PIMEZZI;
+        theta_1_1 = real(phi_1 + phi_2 + PIMEZZI);
+        theta_1_2 = real(phi_1 - phi_2 + PIMEZZI);
     }
 
     //theta 5
     long double theta_5_1, theta_5_2, theta_5_3, theta_5_4;
-    theta_5_1 = acos( (p60(0)*sin(theta_1_1) - p60(1)*cos(theta_1_1) - Di[3] ) / Di[5]);
+    theta_5_1 = real(acos( (p60(0)*sin(theta_1_1) - p60(1)*cos(theta_1_1) - Di[3] ) / Di[5] * complexConverter));
     theta_5_2 = -theta_5_1;
-    theta_5_3 = acos( (p60(0)*sin(theta_1_2) - p60(1)*cos(theta_1_2) - Di[3] ) / Di[5]);
+    theta_5_3 = real(acos( (p60(0)*sin(theta_1_2) - p60(1)*cos(theta_1_2) - Di[3] ) / Di[5] * complexConverter));
     theta_5_4 = -theta_5_3;
 
     //theta 6
@@ -62,10 +124,10 @@ Matrix86ld computeInverseKinematics(Vector3ld p60, Matrix3ld r60)
         Matrix4ld t06 = t60.inverse(); 
         Vector3ld xHat {t06(0, 0), t06(1, 0), t06(2, 0)};
         Vector3ld yHat {t06(0, 1), t06(1, 1), t06(2, 1)};
-        theta_6_1 = atan2( ( - xHat(1) * sin(theta_1_1) + yHat(1) * cos(theta_1_1) ) / sin(theta_5_1), (  xHat(0) * sin(theta_1_1) - yHat(0) * cos(theta_1_1) ) / sin(theta_5_1));
-        theta_6_2 = atan2( ( - xHat(1) * sin(theta_1_1) + yHat(1) * cos(theta_1_1) ) / sin(theta_5_2), (  xHat(0) * sin(theta_1_1) - yHat(0) * cos(theta_1_1) ) / sin(theta_5_2));
-        theta_6_3 = atan2( ( - xHat(1) * sin(theta_1_2) + yHat(1) * cos(theta_1_2) ) / sin(theta_5_3), (  xHat(0) * sin(theta_1_2) - yHat(0) * cos(theta_1_2) ) / sin(theta_5_3));
-        theta_6_4 = atan2( ( - xHat(1) * sin(theta_1_2) + yHat(1) * cos(theta_1_2) ) / sin(theta_5_4), (  xHat(0) * sin(theta_1_2) - yHat(0) * cos(theta_1_2) ) / sin(theta_5_4));
+        theta_6_1 = real(atan2( ( - xHat(1) * sin(theta_1_1) + yHat(1) * cos(theta_1_1) ) / sin(theta_5_1), (  xHat(0) * sin(theta_1_1) - yHat(0) * cos(theta_1_1) ) / sin(theta_5_1)) * complexConverter);
+        theta_6_2 = real(atan2( ( - xHat(1) * sin(theta_1_1) + yHat(1) * cos(theta_1_1) ) / sin(theta_5_2), (  xHat(0) * sin(theta_1_1) - yHat(0) * cos(theta_1_1) ) / sin(theta_5_2)) * complexConverter);
+        theta_6_3 = real(atan2( ( - xHat(1) * sin(theta_1_2) + yHat(1) * cos(theta_1_2) ) / sin(theta_5_3), (  xHat(0) * sin(theta_1_2) - yHat(0) * cos(theta_1_2) ) / sin(theta_5_3)) * complexConverter);
+        theta_6_4 = real(atan2( ( - xHat(1) * sin(theta_1_2) + yHat(1) * cos(theta_1_2) ) / sin(theta_5_4), (  xHat(0) * sin(theta_1_2) - yHat(0) * cos(theta_1_2) ) / sin(theta_5_4)) * complexConverter);
     }
     
     Matrix4ld t41m;
@@ -88,10 +150,10 @@ Matrix86ld computeInverseKinematics(Vector3ld p60, Matrix3ld r60)
 
     //theta 3
     long double theta_3_1, theta_3_2, theta_3_3, theta_3_4, theta_3_5, theta_3_6, theta_3_7, theta_3_8;
-    theta_3_1 = acos( (pow(p41xz_1, 2) - pow(Ai[1], 2) - pow(Ai[2], 2) ) / (2 * Ai[1] * Ai[2]) );
-    theta_3_2 = acos( (pow(p41xz_2, 2) - pow(Ai[1], 2) - pow(Ai[2], 2) ) / (2 * Ai[1] * Ai[2]) );
-    theta_3_3 = acos( (pow(p41xz_3, 2) - pow(Ai[1], 2) - pow(Ai[2], 2) ) / (2 * Ai[1] * Ai[2]) );
-    theta_3_4 = acos( (pow(p41xz_4, 2) - pow(Ai[1], 2) - pow(Ai[2], 2) ) / (2 * Ai[1] * Ai[2]) );
+    theta_3_1 = real( acos( (pow(p41xz_1, 2) - pow(Ai[1], 2) - pow(Ai[2], 2) ) / (2 * Ai[1] * Ai[2]) * complexConverter));
+    theta_3_2 = real( acos( (pow(p41xz_2, 2) - pow(Ai[1], 2) - pow(Ai[2], 2) ) / (2 * Ai[1] * Ai[2]) * complexConverter));
+    theta_3_3 = real( acos( (pow(p41xz_3, 2) - pow(Ai[1], 2) - pow(Ai[2], 2) ) / (2 * Ai[1] * Ai[2]) * complexConverter));
+    theta_3_4 = real( acos( (pow(p41xz_4, 2) - pow(Ai[1], 2) - pow(Ai[2], 2) ) / (2 * Ai[1] * Ai[2]) * complexConverter));
     theta_3_5 = -theta_3_1;
     theta_3_6 = -theta_3_2;
     theta_3_7 = -theta_3_3;
@@ -99,14 +161,14 @@ Matrix86ld computeInverseKinematics(Vector3ld p60, Matrix3ld r60)
 
     //theta 2
     long double theta_2_1, theta_2_2, theta_2_3, theta_2_4, theta_2_5, theta_2_6, theta_2_7, theta_2_8;
-    theta_2_1 = atan2(-p41_1.second, -p41_1.first) - asin((-Ai[2] * sin(theta_3_1) ) / p41xz_1);
-    theta_2_2 = atan2(-p41_2.second, -p41_2.first) - asin((-Ai[2] * sin(theta_3_2) ) / p41xz_2);
-    theta_2_3 = atan2(-p41_3.second, -p41_3.first) - asin((-Ai[2] * sin(theta_3_3) ) / p41xz_3);
-    theta_2_4 = atan2(-p41_4.second, -p41_4.first) - asin((-Ai[2] * sin(theta_3_4) ) / p41xz_4);
-    theta_2_5 = atan2(-p41_1.second, -p41_1.first) - asin(( Ai[2] * sin(theta_3_1) ) / p41xz_1);
-    theta_2_6 = atan2(-p41_2.second, -p41_2.first) - asin(( Ai[2] * sin(theta_3_2) ) / p41xz_2);
-    theta_2_7 = atan2(-p41_3.second, -p41_3.first) - asin(( Ai[2] * sin(theta_3_3) ) / p41xz_3);
-    theta_2_8 = atan2(-p41_4.second, -p41_4.first) - asin(( Ai[2] * sin(theta_3_4) ) / p41xz_4);
+    theta_2_1 = real(atan2(-p41_1.second, -p41_1.first) * complexConverter - asin((-Ai[2] * sin(theta_3_1) ) / p41xz_1 * complexConverter) * complexConverter);
+    theta_2_2 = real(atan2(-p41_2.second, -p41_2.first) * complexConverter - asin((-Ai[2] * sin(theta_3_2) ) / p41xz_2 * complexConverter) * complexConverter);
+    theta_2_3 = real(atan2(-p41_3.second, -p41_3.first) * complexConverter - asin((-Ai[2] * sin(theta_3_3) ) / p41xz_3 * complexConverter) * complexConverter);
+    theta_2_4 = real(atan2(-p41_4.second, -p41_4.first) * complexConverter - asin((-Ai[2] * sin(theta_3_4) ) / p41xz_4 * complexConverter) * complexConverter);
+    theta_2_5 = real(atan2(-p41_1.second, -p41_1.first) * complexConverter - asin(( Ai[2] * sin(theta_3_1) ) / p41xz_1 * complexConverter) * complexConverter);
+    theta_2_6 = real(atan2(-p41_2.second, -p41_2.first) * complexConverter - asin(( Ai[2] * sin(theta_3_2) ) / p41xz_2 * complexConverter) * complexConverter);
+    theta_2_7 = real(atan2(-p41_3.second, -p41_3.first) * complexConverter - asin(( Ai[2] * sin(theta_3_3) ) / p41xz_3 * complexConverter) * complexConverter);
+    theta_2_8 = real(atan2(-p41_4.second, -p41_4.first) * complexConverter - asin(( Ai[2] * sin(theta_3_4) ) / p41xz_4 * complexConverter) * complexConverter);
 
     //theta 4
     Matrix4ld t43m;
@@ -115,35 +177,35 @@ Matrix86ld computeInverseKinematics(Vector3ld p60, Matrix3ld r60)
 
     t43m = transform32(theta_3_1).inverse() * transform21(theta_2_1).inverse() * transform10(theta_1_1).inverse() * t60 * transform65(theta_6_1).inverse() * transform54(theta_5_1).inverse();
     xhat43 = make_pair(t43m(0, 0), t43m(1, 0));
-    theta_4_1 = atan2(xhat43.second, xhat43.first);
+    theta_4_1 = real(atan2(xhat43.second, xhat43.first) * complexConverter);
 
     t43m = transform32(theta_3_2).inverse() * transform21(theta_2_2).inverse() * transform10(theta_1_1).inverse() * t60 * transform65(theta_6_2).inverse() * transform54(theta_5_2).inverse();
     xhat43 = make_pair(t43m(0, 0), t43m(1, 0));
-    theta_4_2 = atan2(xhat43.second, xhat43.first);
+    theta_4_2 = real(atan2(xhat43.second, xhat43.first) * complexConverter);
 
     t43m = transform32(theta_3_3).inverse() * transform21(theta_2_3).inverse() * transform10(theta_1_2).inverse() * t60 * transform65(theta_6_3).inverse() * transform54(theta_5_3).inverse();
     xhat43 = make_pair(t43m(0, 0), t43m(1, 0));
-    theta_4_3 = atan2(xhat43.second, xhat43.first);
+    theta_4_3 = real(atan2(xhat43.second, xhat43.first) * complexConverter);
 
     t43m = transform32(theta_3_4).inverse() * transform21(theta_2_4).inverse() * transform10(theta_1_2).inverse() * t60 * transform65(theta_6_4).inverse() * transform54(theta_5_4).inverse();
     xhat43 = make_pair(t43m(0, 0), t43m(1, 0));
-    theta_4_4 = atan2(xhat43.second, xhat43.first);
+    theta_4_4 = real(atan2(xhat43.second, xhat43.first) * complexConverter);
 
     t43m = transform32(theta_3_5).inverse() * transform21(theta_2_5).inverse() * transform10(theta_1_1).inverse() * t60 * transform65(theta_6_1).inverse() * transform54(theta_5_1).inverse();
     xhat43 = make_pair(t43m(0, 0), t43m(1, 0));
-    theta_4_5 = atan2(xhat43.second, xhat43.first);
+    theta_4_5 = real(atan2(xhat43.second, xhat43.first) * complexConverter);
 
     t43m = transform32(theta_3_6).inverse() * transform21(theta_2_6).inverse() * transform10(theta_1_1).inverse() * t60 * transform65(theta_6_2).inverse() * transform54(theta_5_2).inverse();
     xhat43 = make_pair(t43m(0, 0), t43m(1, 0));
-    theta_4_6 = atan2(xhat43.second, xhat43.first);
+    theta_4_6 = real(atan2(xhat43.second, xhat43.first) * complexConverter);
 
     t43m = transform32(theta_3_7).inverse() * transform21(theta_2_7).inverse() * transform10(theta_1_2).inverse() * t60 * transform65(theta_6_3).inverse() * transform54(theta_5_3).inverse();
     xhat43 = make_pair(t43m(0, 0), t43m(1, 0));
-    theta_4_7 = atan2(xhat43.second, xhat43.first);
+    theta_4_7 = real(atan2(xhat43.second, xhat43.first) * complexConverter);
 
     t43m = transform32(theta_3_8).inverse() * transform21(theta_2_8).inverse() * transform10(theta_1_2).inverse() * t60 * transform65(theta_6_4).inverse() * transform54(theta_5_4).inverse();
     xhat43 = make_pair(t43m(0, 0), t43m(1, 0));
-    theta_4_8 = atan2(xhat43.second, xhat43.first);
+    theta_4_8 = real(atan2(xhat43.second, xhat43.first) * complexConverter);
 
     return Matrix86ld  
     {
@@ -289,110 +351,6 @@ Matrix4ld transform65(long double theta_5)
 }
 
 /*
-bool moveTo(Vector6ld start, pair<Vector3ld, Matrix3ld> end)
-{
-    //Computing the movement
-    MatrixXld th = get<0>(p2pMotionPlan_(start, end, 0.0, 1.0, 0.01));
-
-    //Mandatory to public
-    vector<std_msgs::Float64> theta(6);
-
-    for(int i = 0; i < th.rows(); i++)
-    {
-        //cout << th(i, 0) << " ";
-        for(int j = 0; j < 6; j++)
-        {
-            //Check for errors
-            if(isnan(th(i, j+1)))
-                return false;
-
-            //Copy data
-            theta[j].data = fmod(th(i, j+1), PI);
-
-            //cout << theta[j].data << " ";
-
-            //Wait for connections
-            while (publishers[j].getNumSubscribers() < 1) 
-            {
-                ros::WallDuration sleep_t(0.5);    
-                sleep_t.sleep();
-            }
-
-            //Now we can publish messages
-            publishers[j].publish(theta[j]);
-
-            //Just to be on the safe side
-            ros::spinOnce();
-            ros::spinOnce();
-            ros::spinOnce();
-            ros::spinOnce();
-            ros::spinOnce();
-            ros::spinOnce();
-        }
-        //cout << endl;
-    }
-
-    return true;
-}
-
-
-/*
-tuple<MatrixXld, MatrixXld, MatrixXld> p2pMotionPlan_(Vector6ld ik_start, pair<Vector3ld, Matrix3ld> end, long double minT, long double maxT, long double deltaT)
-{
-    int matrixDimension = (int)round((maxT-minT)/deltaT) + 1;
-
-    MatrixXld Th(matrixDimension, 7);
-    MatrixXld xE(matrixDimension, 4);
-    MatrixXld phiE(matrixDimension, 4);
-
-    Vector6ld ik_end = computeInverseKinematics(end.first, end.second).row(0);
-
-    Matrix64ld A;
-    {
-        Matrix4ld m 
-        {
-            {1.0, minT, pow(minT, 2.0), pow(minT, 3.0)},
-            {0.0, 1.0, 2*minT, 3*pow(minT, 2.0)},
-            {1.0, maxT, pow(maxT, 2.0), pow(maxT, 3.0)},
-            {0.0, 1.0, 2*maxT, 3*pow(maxT, 2.0)}
-        };
-        Matrix4ld mInverse = m.inverse();
-
-        for(int i = 0; i < 6; i++)
-        {       
-            Vector4ld b { ik_start(i), 0.0, ik_end(i), 0.0};
-            A.row(i) = mInverse * b;
-        }
-    }
-
-    {
-        long double t;
-        int i;
-        vector<long double> joints(6);
-        Vector3ld eulerAngles;
-        pair<Vector3ld, Matrix3ld> dk;
-
-        for(t = minT, i = 0; t < maxT + deltaT; t+=deltaT, i++)
-        {
-            Th(i, 0) = xE(i, 0) = phiE(i, 0) = t;
-             
-            for(int j = 0; j < 6; j++)
-                Th(i, j+1) = joints[j] = A(j,0) + A(j,1)*t + A(j,2)*t*t + A(j,3)*t*t*t;
-                
-            dk = computeForwardKinematics(joints);
-            eulerAngles = dk.second.eulerAngles(2, 1, 0);
-
-            for(int j = 0; j < 3; j++)
-            {
-                xE(i, j+1) = dk.first(j);
-                phiE(i, j+1) = eulerAngles(j);
-            }
-        }
-    }
-    
-   return make_tuple(Th, xE, phiE);
-}
-
 tuple<MatrixXld, MatrixXld, MatrixXld> p2pMotionPlan(pair<Vector3ld, Matrix3ld> start, pair<Vector3ld, Matrix3ld> end, long double minT, long double maxT, long double deltaT)
 {
     int matrixDimension = (int)round((maxT-minT)/deltaT) + 1;
@@ -450,5 +408,50 @@ tuple<MatrixXld, MatrixXld, MatrixXld> p2pMotionPlan(pair<Vector3ld, Matrix3ld> 
     
    return make_tuple(Th, xE, phiE);
 }
-
 */
+
+/*
+bool moveTo(pair<Vector3ld, Matrix3ld> end)
+{
+    //Computing the movement
+    MatrixXld th = get<0>(p2pMotionPlan_(start, end, 0.0, 1.0, 0.01));
+
+
+
+    for(int i = 0; i < th.rows(); i++)
+    {
+        //cout << th(i, 0) << " ";
+        for(int j = 0; j < 6; j++)
+        {
+            //Check for errors
+            if(isnan(th(i, j+1)))
+                return false;
+
+            //Copy data
+            theta[j].data = fmod(th(i, j+1), PI);
+
+            //cout << theta[j].data << " ";
+
+            //Wait for connections
+            while (publishers[j].getNumSubscribers() < 1) 
+            {
+                ros::WallDuration sleep_t(0.5);    
+                sleep_t.sleep();
+            }
+
+            //Now we can publish messages
+            publishers[j].publish(theta[j]);
+
+            //Just to be on the safe side
+            ros::spinOnce();
+            ros::spinOnce();
+            ros::spinOnce();
+            ros::spinOnce();
+            ros::spinOnce();
+            ros::spinOnce();
+        }
+        //cout << endl;
+    }
+
+    return true;
+}*/

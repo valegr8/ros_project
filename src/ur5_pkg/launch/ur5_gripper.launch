@@ -25,8 +25,6 @@
         -param robot_description 
         -model robot 
         -z 1.02 
-        -y 5.00
-        -x 5.00
         -J shoulder_pan_joint 0
         -J shoulder_lift_joint -1.5 
         -J elbow_joint 1.0
