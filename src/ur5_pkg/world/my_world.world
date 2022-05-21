@@ -37,7 +37,7 @@
     </model>
 
     <model name="cube1">
-    <pose>0.6 0 1.04 0 0 0</pose>
+    <pose>0 0.5 1.04 0 0 0</pose>
     <link name="link">
       <inertial>
         <mass>1.0</mass>
@@ -69,7 +69,7 @@
   </model>
 
   <model name="cube2">
-    <pose>0.6 0.15 1.04 0 0 0</pose>
+    <pose>0.16 0.5 1.04 0 0 0</pose>
     <link name="link">
       <inertial>
         <mass>1.0</mass>
@@ -101,7 +101,7 @@
   </model>
 
   <model name="cube3">
-    <pose>0.6 -0.15 1.04 0 0 0</pose>
+    <pose>-0.16 0.5 1.04 0 0 0</pose>
     <link name="link">
       <inertial>
         <mass>1.0</mass>
@@ -134,7 +134,7 @@
 
 
   <model name="table">
-    <pose>0.5 0 0 0 0 0</pose>
+    <pose>0 0.55 0 0 0 1.55</pose>
     <static>true</static>
     <link name="link">
       <collision name="surface">
@@ -265,7 +265,6 @@
       </visual>
     </link>
   </model>
-
-
+  
   </world>
 </sdf>
