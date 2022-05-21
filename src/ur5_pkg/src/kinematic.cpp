@@ -1,5 +1,10 @@
 #include "ur5_pkg/utils.h"
 
+bool pointToPointMotionPlan(pair<Vector3ld, Vector3ld> end, ros::Rate& loop_rate, long double minT, long double maxT, long double deltaT)
+{
+    return pointToPointMotionPlan(make_pair(end.first, eulerToMatrix(end.second)), loop_rate, minT, maxT, deltaT);
+}
+
 bool pointToPointMotionPlan(pair<Vector3ld, Matrix3ld> end, ros::Rate& loop_rate, long double minT, long double maxT, long double deltaT)
 {
     vector<std_msgs::Float64> theta(JOINT_NUM);//Mandatory to public

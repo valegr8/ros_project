@@ -11,10 +11,10 @@ void print_position(long double x, long double y, long double z)
 
 void print_eluler_angles(Vector3ld ea)
 {
-    cout << BLUE << "Eluler angles - Roll(z) Pitch(y) Yaw(x): " << NC << "[ ";
-    cout << ea(0) << ", ";
-    cout << ea(1) << ", ";
-    cout << ea(2) << " ]" << endl;
+    cout << BLUE << "Eluler angles (roll pitch yaw): " << NC << "[ ";
+    cout << YELLOW << ea(0) << NC << ", ";
+    cout << YELLOW << ea(1) << NC << ", ";
+    cout << YELLOW << ea(2) << NC << " ]" << endl;
 }
 
 void print_joints(vector<long double> joints)
@@ -39,26 +39,34 @@ void print_robot_status()
     print_joints(jointState);
     pair<Vector3ld, Matrix3ld> forward = computeForwardKinematics(jointState);
     print_position(forward.first(0), forward.first(1), forward.first(2));
-    print_eluler_angles(matrix2euler(forward.second));
+    print_eluler_angles(radToDeg(matrixToEuler(forward.second)));
     cout << endl << "----------------------------------------------------------" << endl << endl;
 }
 
-Matrix3ld euler2matrix(long double roll, long double pitch, long double yaw)
+Vector3ld radToDeg(Vector3ld in)
 {
-    AngleAxis<long double> rollAngle(roll, Vector3ld::UnitZ());
-    AngleAxis<long double> yawAngle(yaw, Vector3ld::UnitY());
-    AngleAxis<long double> pitchAngle(pitch, Vector3ld::UnitX());
-
-    Eigen::Quaternion<long double> q = rollAngle * yawAngle * pitchAngle;
-
-    Matrix3ld rotationMatrix = q.matrix();
-
-    return rotationMatrix;
+    long double mul = (180.0/PI);
+    return Vector3ld{in(0)*mul, in(1)*mul, in(2)*mul};
 }
 
-Vector3ld matrix2euler(Matrix3ld m) 
+Vector3ld degToRad(Vector3ld in)
 {
-    return m.eulerAngles(0, 1, 2);
+    long double mul = (PI/180.0);
+    return Vector3ld{in(0)*mul, in(1)*mul, in(2)*mul};
+}
+
+Matrix3ld eulerToMatrix(Vector3ld eulerAngles)
+{
+    AngleAxis<long double> rollAngle(eulerAngles(0), Vector3ld::UnitX());
+    AngleAxis<long double> pitchAngle(eulerAngles(1), Vector3ld::UnitY());
+    AngleAxis<long double> yawAngle(eulerAngles(2), Vector3ld::UnitZ());
+    Eigen::Quaternion<long double> q = rollAngle * pitchAngle * yawAngle;
+    return q.matrix();
+}
+
+Vector3ld matrixToEuler(Matrix3ld rotationMatrix) 
+{
+    return rotationMatrix.eulerAngles(0, 1, 2);
 }
 
 void set_joint_values(vector<long double> positions)

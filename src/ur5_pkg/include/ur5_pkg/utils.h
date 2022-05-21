@@ -64,9 +64,13 @@ void print_joints(vector<long double>);
 void print_desidered_joints(Vector6ld);
 void print_robot_status();
 
-//Funzioni di conversione
-Matrix3ld euler2matrix(long double, long double, long double);
-Vector3ld matrix2euler(Matrix3ld m);
+//Funzioni di conversione radianti - gradi
+Vector3ld radToDeg(Vector3ld);
+Vector3ld degToRad(Vector3ld);
+
+//Funzioni di conversione matrici di rotazione - angoli euleriani
+Matrix3ld eulerToMatrix(Vector3ld);
+Vector3ld matrixToEuler(Matrix3ld);
 
 //Funzioni di get 
 void get_position_shoulder_pan(const control_msgs::JointControllerState::ConstPtr&);
@@ -81,8 +85,11 @@ void set_joint_values(vector<long double>);
 void set_publishers(ros::NodeHandle);
 void set_subscribers(ros::NodeHandle);
 
-//Cinematiche
+//Funzione movimento
+bool pointToPointMotionPlan(pair<Vector3ld, Vector3ld>, ros::Rate&, long double, long double, long double);
 bool pointToPointMotionPlan(pair<Vector3ld, Matrix3ld>, ros::Rate&, long double, long double, long double);
+
+//Cinematiche
 pair<Vector3ld, Matrix3ld> computeForwardKinematics(vector<long double>);
 Matrix86ld computeInverseKinematics(Vector3ld, Matrix3ld);
 Matrix6ld computeJacobian(vector<long double>);
@@ -101,5 +108,6 @@ extern vector<ros::Subscriber> subscribers; //< global subscribers vector
 extern vector<ros::Publisher> publishers;  // global publisher vector
 extern vector<long double> jointState; // contains all /state values of the joints
 extern int queue_size; // used for publisher and subscribers queue size 
+extern bool debug;
 
 #endif  //UTILS_H
