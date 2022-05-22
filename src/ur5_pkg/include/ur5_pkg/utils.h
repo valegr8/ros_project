@@ -17,6 +17,7 @@
 
 #include <ros/ros.h> //ros header
 #include <control_msgs/JointControllerState.h> //Control messages
+#include <control_msgs/GripperCommandActionGoal.h> //Gripper control
 
 #include <eigen3/Eigen/Core>//Eigen3 header - for matrix calculation
 #include <eigen3/Eigen/Dense>
@@ -80,10 +81,13 @@ void get_position_wrist_1(const control_msgs::JointControllerState::ConstPtr&);
 void get_position_wrist_2(const control_msgs::JointControllerState::ConstPtr&);
 void get_position_wrist_3(const control_msgs::JointControllerState::ConstPtr&);
 
-//Funzioni di get
+//Funzioni di inizializzazione
 void set_joint_values(vector<long double>);
 void set_publishers(ros::NodeHandle);
 void set_subscribers(ros::NodeHandle);
+
+//Controllo gripper
+void gripper_set(long double);
 
 //Funzione movimento
 bool pointToPointMotionPlan(pair<Vector3ld, Vector3ld>, ros::Rate&, long double, long double, long double);
@@ -106,6 +110,8 @@ Matrix4ld transform65(long double);
 
 extern vector<ros::Subscriber> subscribers; //< global subscribers vector
 extern vector<ros::Publisher> publishers;  // global publisher vector
+extern ros::Subscriber gripperSubscriber; // gripper subscriber
+extern ros::Publisher gripperPublisher; // gripper publisher
 extern vector<long double> jointState; // contains all /state values of the joints
 extern int queue_size; // used for publisher and subscribers queue size 
 extern bool debug;

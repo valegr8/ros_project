@@ -3,6 +3,8 @@
 //Variabili globali
 vector<ros::Subscriber> subscribers(JOINT_NUM); //< global subscribers vector
 vector<ros::Publisher> publishers(JOINT_NUM);  // global publisher vector
+ros::Subscriber gripperSubscriber; // gripper subscriber
+ros::Publisher gripperPublisher; 
 vector<long double> jointState(JOINT_NUM); // contains all /state values of the joints
 int queue_size; // used for publisher and subscribers queue size 
 bool debug = true; //For debug

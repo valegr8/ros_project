@@ -93,6 +93,14 @@ void set_joint_values(vector<long double> positions)
     cout << " ]" << GREEN << " [ DONE ] " << NC << endl;  
 }
 
+void gripper_set(long double gripperValueToSet)
+{
+  control_msgs::GripperCommandActionGoal gripperValue;
+  gripperValue.goal.command.position = gripperValueToSet;
+  
+  gripperPublisher.publish(gripperValue);
+}
+
 void set_subscribers(ros::NodeHandle n)
 {
     subscribers[0] = n.subscribe("/shoulder_pan_joint_position_controller/state", queue_size, get_position_shoulder_pan);
@@ -101,6 +109,7 @@ void set_subscribers(ros::NodeHandle n)
     subscribers[3] = n.subscribe("/wrist_1_joint_position_controller/state", queue_size, get_position_wrist_1);
     subscribers[4] = n.subscribe("/wrist_2_joint_position_controller/state", queue_size, get_position_wrist_2);
     subscribers[5] = n.subscribe("/wrist_3_joint_position_controller/state", queue_size, get_position_wrist_3);
+    //gripperSubscriber = n.subscribe("", queue_size, );
 }
 
 void set_publishers(ros::NodeHandle n)
@@ -111,6 +120,7 @@ void set_publishers(ros::NodeHandle n)
 	publishers[3] = n.advertise<std_msgs::Float64>("/wrist_1_joint_position_controller/command", queue_size);
 	publishers[4] = n.advertise<std_msgs::Float64>("/wrist_2_joint_position_controller/command", queue_size);
 	publishers[5] = n.advertise<std_msgs::Float64>("/wrist_3_joint_position_controller/command", queue_size);
+    //gripperPublisher = n.advertise<std_msgs::Float64>("", queue_size);
 }
 
 void get_position_shoulder_pan(const control_msgs::JointControllerState::ConstPtr& ctr_msg) {jointState[0] = ctr_msg->process_value;}
