@@ -6,8 +6,87 @@ vector<ros::Publisher> publishers(JOINT_NUM);  // global publisher vector
 ros::Subscriber gripperSubscriber; // gripper subscriber
 ros::Publisher gripperPublisher; 
 vector<long double> jointState(JOINT_NUM); // contains all /state values of the joints
+long double gripperState; // contains state values of the gripper
 int queue_size; // used for publisher and subscribers queue size 
 bool debug = true; //For debug
+
+void testGripper(ros::Rate& loop_rate)
+{
+    std_msgs::Float64 theta;
+
+    ros::spinOnce();
+    loop_rate.sleep();
+    print_gripper_status();
+
+    theta.data = 0.5;
+    gripperPublisher.publish(theta);
+
+    ros::spinOnce();
+    loop_rate.sleep();
+    print_gripper_status();
+
+    theta.data = 0.99;
+    gripperPublisher.publish(theta);
+    ros::spinOnce();
+    loop_rate.sleep();
+    print_gripper_status();
+
+    theta.data = 0.5;
+    gripperPublisher.publish(theta);
+
+    ros::spinOnce();
+    loop_rate.sleep();
+    print_gripper_status();
+
+    theta.data = 0.01;
+    gripperPublisher.publish(theta);
+}
+
+int main (int argc, char **argv)
+{
+    if(debug)
+        cout << GREEN << "Debug attivo" << NC << endl << endl;
+    else
+        cout << RED << "Debug non attivo" << NC << endl << endl;
+
+    cout << BLUE << "Starting ROS node..." << NC;
+
+    ros::init(argc, argv, "node");
+    ros::NodeHandle nodeHandle;
+
+    ros::Rate loop_rate(LOOP_RATE_FREQUENCY);
+    
+    set_subscribers(nodeHandle);
+    set_publishers(nodeHandle);     
+
+    ros::spinOnce();
+    loop_rate.sleep();
+
+    cout << GREEN << " [ DONE ] " << endl;
+
+    //just the first time, to set the initial position of the robot
+    if(ros::ok())
+    {
+        jointState = {0, -1.5, 1, 0, 0, 0};
+        set_joint_values(jointState);
+    
+        ros::spinOnce();
+        loop_rate.sleep();
+    }
+
+    cout << endl << "----------------------------------------------------------" << endl << endl;
+
+    testGripper(loop_rate);
+
+    //Modalità in cui inserisci i valori e vai al punto inserito
+    //askUserGoToPoint(loop_rate);
+
+    //Modalità in cui il robot prende il cubo centrale
+    //pigliaCuboCentrale(loop_rate);
+
+    //ROS_ERROR("Ros not working\n");
+    return 1; 
+}
 
 void pigliaCuboCentrale(ros::Rate& loop_rate)
 {
@@ -101,48 +180,4 @@ void askUserGoToPoint(ros::Rate& loop_rate)
         sleep(1);
         loop_rate.sleep();
     }
-}
-
-int main (int argc, char **argv)
-{
-    if(debug)
-        cout << GREEN << "Debug attivo" << NC << endl << endl;
-    else
-        cout << RED << "Debug non attivo" << NC << endl << endl;
-
-    cout << BLUE << "Starting ROS node..." << NC;
-
-    ros::init(argc, argv, "node");
-    ros::NodeHandle nodeHandle;
-
-    ros::Rate loop_rate(LOOP_RATE_FREQUENCY);
-    
-    set_subscribers(nodeHandle);
-    set_publishers(nodeHandle);     
-
-    ros::spinOnce();
-    loop_rate.sleep();
-
-    cout << GREEN << " [ DONE ] " << endl;
-
-    //just the first time, to set the initial position of the robot
-    if(ros::ok())
-    {
-        jointState = {0, -1.5, 1, 0, 0, 0};
-        set_joint_values(jointState);
-    
-        ros::spinOnce();
-        loop_rate.sleep();
-    }
-
-    cout << endl << "----------------------------------------------------------" << endl << endl;
-
-    //Modalità in cui inserisci i valori e vai al punto inserito
-    askUserGoToPoint(loop_rate);
-
-    //Modalità in cui il robot prende il cubo centrale
-    //pigliaCuboCentrale(loop_rate);
-
-    //ROS_ERROR("Ros not working\n");
-    return 1; 
 }

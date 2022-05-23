@@ -33,6 +33,11 @@ void print_desidered_joints(Vector6ld joints)
     cout << "]" << endl;
 }
 
+void print_gripper_status()
+{
+    cout << "Grpper state: " << gripperState << endl;
+}
+
 void print_robot_status()
 {
     cout << RED << "Robot informations " << NC << endl;
@@ -40,6 +45,7 @@ void print_robot_status()
     pair<Vector3ld, Matrix3ld> forward = computeForwardKinematics(jointState);
     print_position(forward.first(0), forward.first(1), forward.first(2));
     print_eluler_angles(radToDeg(matrixToEuler(forward.second)));
+    print_gripper_status();
     cout << endl << "----------------------------------------------------------" << endl << endl;
 }
 
@@ -109,7 +115,7 @@ void set_subscribers(ros::NodeHandle n)
     subscribers[3] = n.subscribe("/wrist_1_joint_position_controller/state", queue_size, get_position_wrist_1);
     subscribers[4] = n.subscribe("/wrist_2_joint_position_controller/state", queue_size, get_position_wrist_2);
     subscribers[5] = n.subscribe("/wrist_3_joint_position_controller/state", queue_size, get_position_wrist_3);
-    //gripperSubscriber = n.subscribe("", queue_size, );
+    gripperSubscriber = n.subscribe("/gripper_controller/state", queue_size, get_position_gripper);
 }
 
 void set_publishers(ros::NodeHandle n)
@@ -120,7 +126,7 @@ void set_publishers(ros::NodeHandle n)
 	publishers[3] = n.advertise<std_msgs::Float64>("/wrist_1_joint_position_controller/command", queue_size);
 	publishers[4] = n.advertise<std_msgs::Float64>("/wrist_2_joint_position_controller/command", queue_size);
 	publishers[5] = n.advertise<std_msgs::Float64>("/wrist_3_joint_position_controller/command", queue_size);
-    //gripperPublisher = n.advertise<std_msgs::Float64>("", queue_size);
+    gripperPublisher = n.advertise<std_msgs::Float64>("/gripper_controller/command", queue_size);
 }
 
 void get_position_shoulder_pan(const control_msgs::JointControllerState::ConstPtr& ctr_msg) {jointState[0] = ctr_msg->process_value;}
@@ -129,3 +135,4 @@ void get_position_elbow(const control_msgs::JointControllerState::ConstPtr& ctr_
 void get_position_wrist_1(const control_msgs::JointControllerState::ConstPtr& ctr_msg) {jointState[3] = ctr_msg->process_value;}
 void get_position_wrist_2(const control_msgs::JointControllerState::ConstPtr& ctr_msg) {jointState[4] = ctr_msg->process_value;}
 void get_position_wrist_3(const control_msgs::JointControllerState::ConstPtr& ctr_msg) {jointState[5] = ctr_msg->process_value;}
+void get_position_gripper(const control_msgs::JointControllerState::ConstPtr& ctr_msg) {gripperState = ctr_msg->process_value;}

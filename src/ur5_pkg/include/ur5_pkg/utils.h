@@ -64,6 +64,7 @@ void print_eluler_angles(Vector3ld);
 void print_joints(vector<long double>);
 void print_desidered_joints(Vector6ld);
 void print_robot_status();
+void print_gripper_status();
 
 //Funzioni di conversione radianti - gradi
 Vector3ld radToDeg(Vector3ld);
@@ -80,6 +81,7 @@ void get_position_elbow(const control_msgs::JointControllerState::ConstPtr&);
 void get_position_wrist_1(const control_msgs::JointControllerState::ConstPtr&);
 void get_position_wrist_2(const control_msgs::JointControllerState::ConstPtr&);
 void get_position_wrist_3(const control_msgs::JointControllerState::ConstPtr&);
+void get_position_gripper(const control_msgs::JointControllerState::ConstPtr&);
 
 //Funzioni di inizializzazione
 void set_joint_values(vector<long double>);
@@ -106,6 +108,10 @@ Matrix4ld transform43(long double);
 Matrix4ld transform54(long double);
 Matrix4ld transform65(long double);
 
+//Metodi temporanei di testing
+void pigliaCuboCentrale(ros::Rate&);
+void askUserGoToPoint(ros::Rate&);
+
 //----------------------------------------------------------------------------------------
 
 extern vector<ros::Subscriber> subscribers; //< global subscribers vector
@@ -113,6 +119,7 @@ extern vector<ros::Publisher> publishers;  // global publisher vector
 extern ros::Subscriber gripperSubscriber; // gripper subscriber
 extern ros::Publisher gripperPublisher; // gripper publisher
 extern vector<long double> jointState; // contains all /state values of the joints
+extern long double gripperState; // contains state values of the gripper
 extern int queue_size; // used for publisher and subscribers queue size 
 extern bool debug;
 

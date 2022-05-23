@@ -2,7 +2,7 @@
 <launch>
     <arg name="transmission_hw_interface" default="hardware_interface/EffortJointInterface" />
     <!-- <arg name="transmission_hw_interface" default="hardware_interface/PositionJointInterface" /> -->
-
+    <!--output="screen" args="ur5_arm_controller gripper_controller joint_state_controller"-->
     <!-- startup simulated world -->
     <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
     <include file="$(find gazebo_ros)/launch/empty_world.launch">
@@ -47,6 +47,7 @@
         wrist_1_joint_position_controller 
         wrist_2_joint_position_controller 
         wrist_3_joint_position_controller 
+        gripper_controller
         joint_state_controller"/>
 
 </launch>
