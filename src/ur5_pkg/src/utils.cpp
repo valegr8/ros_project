@@ -35,7 +35,7 @@ void print_desidered_joints(Vector6ld joints)
 
 void print_gripper_status()
 {
-    cout << "Grpper state: " << gripperState << endl;
+    cout << "Gripper state: " << gripperState << endl;
 }
 
 void print_robot_status()
@@ -99,12 +99,22 @@ void set_joint_values(vector<long double> positions)
     cout << " ]" << GREEN << " [ DONE ] " << NC << endl;  
 }
 
-void gripper_set(long double gripperValueToSet)
+void gripper_set(long double gripperValueToSet, ros::Rate& loop_rate)
 {
-  control_msgs::GripperCommandActionGoal gripperValue;
-  gripperValue.goal.command.position = gripperValueToSet;
-  
-  gripperPublisher.publish(gripperValue);
+    //Mandatory to public
+    std_msgs::Float64 gripperValue;
+
+    //Putting the value into the std_msgs::Float64 structure
+    gripperValue.data = gripperValueToSet;
+
+    //Public
+    gripperPublisher.publish(gripperValue);
+
+    //The gripper takes time to set
+    loop_rate.sleep();
+    loop_rate.sleep();
+    loop_rate.sleep();
+    ros::spinOnce();
 }
 
 void set_subscribers(ros::NodeHandle n)
@@ -135,4 +145,4 @@ void get_position_elbow(const control_msgs::JointControllerState::ConstPtr& ctr_
 void get_position_wrist_1(const control_msgs::JointControllerState::ConstPtr& ctr_msg) {jointState[3] = ctr_msg->process_value;}
 void get_position_wrist_2(const control_msgs::JointControllerState::ConstPtr& ctr_msg) {jointState[4] = ctr_msg->process_value;}
 void get_position_wrist_3(const control_msgs::JointControllerState::ConstPtr& ctr_msg) {jointState[5] = ctr_msg->process_value;}
-void get_position_gripper(const control_msgs::JointControllerState::ConstPtr& ctr_msg) {gripperState = ctr_msg->process_value;}
+void get_position_gripper(const control_msgs::JointControllerState::ConstPtr& ctr_msg) { gripperState = ctr_msg->process_value;}

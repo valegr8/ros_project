@@ -10,37 +10,114 @@ long double gripperState; // contains state values of the gripper
 int queue_size; // used for publisher and subscribers queue size 
 bool debug = true; //For debug
 
+/*
+void testGripperRotation(ros::Rate& loop_rate)
+{
+    //Chiudo il gripper
+    gripper_set(1, loop_rate);
+
+    long double val;
+
+    while(true)
+    {
+        cout << "Inserici valore: ";
+        cin >> val;
+
+        set_joint_values({0, -1.5, 1, 0, 0, val});
+
+        loop_rate.sleep();
+        loop_rate.sleep();
+        loop_rate.sleep();
+        loop_rate.sleep();
+        loop_rate.sleep();
+        ros::spinOnce();
+        ros::spinOnce();
+        ros::spinOnce();
+        ros::spinOnce();
+        ros::spinOnce();
+
+    }
+
+    /*
+    for(long double para = -2*PI; para < 2*PI; para+=0.1)
+    {
+        set_joint_values({0, -1.5, 1, 0, 0, para});
+        loop_rate.sleep();
+        loop_rate.sleep();
+        loop_rate.sleep();
+        loop_rate.sleep();
+        loop_rate.sleep();
+        ros::spinOnce();
+        ros::spinOnce();
+        ros::spinOnce();
+        ros::spinOnce();
+        ros::spinOnce();
+    }*/
+        
+
+    /*
+    int i;
+    while(true)
+    {
+        loop_rate.sleep();
+        ros::spinOnce();
+        print_robot_status();
+        cout << "continua ... ";
+        cin >> i;
+
+        
+
+        loop_rate.sleep();
+        ros::spinOnce();
+        print_robot_status();
+        cout << "continua ... ";
+        cin >> i;
+
+        set_joint_values({0, -1.5, 1, 0, 0, -PI});
+
+        loop_rate.sleep();
+        ros::spinOnce();
+        print_robot_status();
+        cout << "continua ... ";
+        cin >> i;
+
+        set_joint_values({0, -1.5, 1, 0, 0, PI});
+        
+    }
+    */
+//}
+
+/*
 void testGripper(ros::Rate& loop_rate)
 {
-    std_msgs::Float64 theta;
+    std_msgs::Float64 gripperValue;
+    long double value;
 
-    ros::spinOnce();
-    loop_rate.sleep();
-    print_gripper_status();
+    while(true)
+    {
+        loop_rate.sleep();
+        loop_rate.sleep();
+        loop_rate.sleep();
+        //loop_rate.sleep();
+        //ros::spinOnce();
+        //ros::spinOnce();
+        //ros::spinOnce();
+        ros::spinOnce();
+        
+        //Stampo info robot
+        print_robot_status();
 
-    theta.data = 0.5;
-    gripperPublisher.publish(theta);
+        cout << "Inserisci valore del gripper: ";
+        cin >> value;
 
-    ros::spinOnce();
-    loop_rate.sleep();
-    print_gripper_status();
+        //Copio il valore in std_msgs::Float64
+        gripperValue.data = value;
 
-    theta.data = 0.99;
-    gripperPublisher.publish(theta);
-    ros::spinOnce();
-    loop_rate.sleep();
-    print_gripper_status();
-
-    theta.data = 0.5;
-    gripperPublisher.publish(theta);
-
-    ros::spinOnce();
-    loop_rate.sleep();
-    print_gripper_status();
-
-    theta.data = 0.01;
-    gripperPublisher.publish(theta);
+        //Pubblico
+        gripperPublisher.publish(gripperValue);
+    }
 }
+*/
 
 int main (int argc, char **argv)
 {
@@ -67,7 +144,7 @@ int main (int argc, char **argv)
     //just the first time, to set the initial position of the robot
     if(ros::ok())
     {
-        jointState = {0, -1.5, 1, 0, 0, 0};
+        jointState = {0, -1.5, 1, 0, 0, -1.5};
         set_joint_values(jointState);
     
         ros::spinOnce();
@@ -76,10 +153,12 @@ int main (int argc, char **argv)
 
     cout << endl << "----------------------------------------------------------" << endl << endl;
 
-    testGripper(loop_rate);
+    //testGripperRotation(loop_rate);
+
+    //testGripper(loop_rate);
 
     //Modalità in cui inserisci i valori e vai al punto inserito
-    //askUserGoToPoint(loop_rate);
+    askUserGoToPoint(loop_rate);
 
     //Modalità in cui il robot prende il cubo centrale
     //pigliaCuboCentrale(loop_rate);
@@ -99,21 +178,41 @@ void pigliaCuboCentrale(ros::Rate& loop_rate)
     //End effector punato in giù 
     //Roll : 180°, pitch: 0°, yaw:0°
 
-    cout << "Mi posizione sopra il cubo" << endl;
+    cout << "Mi posizione sopra il cubo 0.0, 0.5, 0.4" << endl;
     //Mi posizione sopra il cubo
-    pointToPointMotionPlan(make_pair(Vector3ld{0.0, 0.5, 0.4}, degToRad(Vector3ld{180.0, 0.0, 0.0})), loop_rate, 0.0, 1.0, 0.01);
+    pointToPointMotionPlan(make_pair(Vector3ld{0.0, 0.5, 0.4}, degToRad(Vector3ld{180.0, 0.0, 90.0})), loop_rate, 0.0, 1.0, 0.01);
 
-    cout << "Prendo il cubo" << endl;
+    cout << "Apro gripper" << endl;
+    //Apro il gripper
+    gripper_set(0, loop_rate);
+
+    print_robot_status();
+    
+    cout << "Prendo il cubo 0.0, 0.5, 0.3" << endl;
     //Prendo il cubo
-    pointToPointMotionPlan(make_pair(Vector3ld{0.0, 0.5, 0.1}, degToRad(Vector3ld{180.0, 0.0, 0.0})), loop_rate, 0.0, 1.0, 0.01);
+    pointToPointMotionPlan(make_pair(Vector3ld{0.0, 0.5, 0.3}, degToRad(Vector3ld{180.0, 0.0, 90.0})), loop_rate, 0.0, 1.0, 0.01);
+    
+    cout << "Chudo gripper" << endl;
+    //Chiudo il gripper
+    gripper_set(1, loop_rate);
 
-    cout << "Alzo il cubo" << endl;
+    print_robot_status();
+
+    cout << "Alzo il cubo 0.0, 0.5, 0.4" << endl;
     //Lo alzo
     pointToPointMotionPlan(make_pair(Vector3ld{0.0, 0.5, 0.4}, degToRad(Vector3ld{180.0, 0.0, 0.0})), loop_rate, 0.0, 1.0, 0.01);
 
-    cout << "Mi sposto fuori dal tavolo" << endl;
+    print_robot_status();
+
+    cout << "Mi sposto fuori dal tavolo 0.5, 0.5, 0.2" << endl;
     //Mi sposto fuori dal tavolo
     pointToPointMotionPlan(make_pair(Vector3ld{0.5, 0.5, 0.2}, degToRad(Vector3ld{180.0, 0.0, 0.0})), loop_rate, 0.0, 1.0, 0.01);
+
+    cout << "Apro gripper" << endl;
+    //Apro il gripper
+    gripper_set(0, loop_rate);
+
+    print_robot_status();
 }
 
 void askUserGoToPoint(ros::Rate& loop_rate)

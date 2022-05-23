@@ -43,7 +43,7 @@ typedef Matrix<long double, Dynamic, Dynamic> MatrixXld; // dynamic matrix
 
 //Definizioni costanti
 const int JOINT_NUM = 6; //number of joint for ur5
-const double LOOP_RATE_FREQUENCY = 10;  //< used to set run loops frequency
+const double LOOP_RATE_FREQUENCY = 5;  //< used to set run loops frequency
 const long double PI = 3.14159265359; //pi value
 const long double PIMEZZI = 1.57079632679; //pi/2 value
 const string GREEN = "\033[0;92m";
@@ -81,7 +81,7 @@ void get_position_elbow(const control_msgs::JointControllerState::ConstPtr&);
 void get_position_wrist_1(const control_msgs::JointControllerState::ConstPtr&);
 void get_position_wrist_2(const control_msgs::JointControllerState::ConstPtr&);
 void get_position_wrist_3(const control_msgs::JointControllerState::ConstPtr&);
-void get_position_gripper(const control_msgs::JointControllerState::ConstPtr&);
+void get_position_gripper(const control_msgs::JointControllerState::ConstPtr& ctr_msg);
 
 //Funzioni di inizializzazione
 void set_joint_values(vector<long double>);
@@ -89,7 +89,7 @@ void set_publishers(ros::NodeHandle);
 void set_subscribers(ros::NodeHandle);
 
 //Controllo gripper
-void gripper_set(long double);
+void gripper_set(long double, ros::Rate&);
 
 //Funzione movimento
 bool pointToPointMotionPlan(pair<Vector3ld, Vector3ld>, ros::Rate&, long double, long double, long double);
