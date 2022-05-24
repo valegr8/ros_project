@@ -36,7 +36,7 @@
         output="screen" />
 
     <!-- Load joint controller configurations from YAML file to parameter server -->
-    <rosparam file="$(find ur5_pkg)/config/ur5.yaml" command="load"/>
+    <rosparam file="$(find ur5_pkg)/config/ur5_gripper.yaml" command="load"/>
 
     <!-- CONTROLLER FOR OUR NODE -->
     <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"

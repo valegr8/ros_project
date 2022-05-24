@@ -43,7 +43,7 @@ typedef Matrix<long double, Dynamic, Dynamic> MatrixXld; // dynamic matrix
 
 //Definizioni costanti
 const int JOINT_NUM = 6; //number of joint for ur5
-const double LOOP_RATE_FREQUENCY = 5;  //< used to set run loops frequency
+const double LOOP_RATE_FREQUENCY = 10;  //< used to set run loops frequency
 const long double PI = 3.14159265359; //pi value
 const long double PIMEZZI = 1.57079632679; //pi/2 value
 const string GREEN = "\033[0;92m";
@@ -57,6 +57,10 @@ const vector<double> ALPHAi = {PI/2, 0.0, 0.0, PI/2, -PI/2, 0.0};   //< Vector t
 const vector<double> Di = {0.089159, 0.0, 0.0, 0.10915, 0.09465, 0.0823};   //< Vector that contains d values for ur5, used for kinematic
 
 //----------------------------------------------------------------------------------------
+
+//Funzioni per i segnali
+void set_signals();
+void signal_handler(int);
 
 //Funzioni di stampa
 void print_position(long double, long double, long double);
@@ -111,6 +115,7 @@ Matrix4ld transform65(long double);
 //Metodi temporanei di testing
 void pigliaCuboCentrale(ros::Rate&);
 void askUserGoToPoint(ros::Rate&);
+void mySleep(ros::Rate&);
 
 //----------------------------------------------------------------------------------------
 
@@ -122,5 +127,6 @@ extern vector<long double> jointState; // contains all /state values of the join
 extern long double gripperState; // contains state values of the gripper
 extern int queue_size; // used for publisher and subscribers queue size 
 extern bool debug;
+extern bool gripper;
 
 #endif  //UTILS_H

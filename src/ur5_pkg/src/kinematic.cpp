@@ -46,7 +46,8 @@ bool pointToPointMotionPlan(pair<Vector3ld, Matrix3ld> end, ros::Rate& loop_rate
         //Compute the next position for all joints
         for(int j = 0; j < JOINT_NUM; j++)
         {
-            theta[j].data = fmod(A(j,0) + A(j,1)*t + A(j,2)*pow(t, 2) + A(j,3)*pow(t, 3), PI);
+            //theta[j].data = fmod(A(j,0) + A(j,1)*t + A(j,2)*pow(t, 2) + A(j,3)*pow(t, 3), PI);
+            theta[j].data = A(j,0) + A(j,1)*t + A(j,2)*pow(t, 2) + A(j,3)*pow(t, 3), PI;
             //Checking for NaN
             if(isnan(theta[j].data))
                 return false;

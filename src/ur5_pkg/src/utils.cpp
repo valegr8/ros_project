@@ -1,8 +1,20 @@
 #include <ur5_pkg/utils.h>
 
+void signal_handler(int signal)
+{
+    //cout <<
+    //gSignalStatus = signal;
+}
+
+void set_signals()
+{
+    // Install a signal handler
+    std::signal(SIGINT, signal_handler);
+} 
+
 void print_position(long double x, long double y, long double z)
 {
-    cout << BLUE << "Position ( x y z ) : " << NC << "[ ";
+    cout << BLUE << "Position (x y z): " << NC << "[ ";
     cout << YELLOW << x << NC << ", "; 
     cout << YELLOW << y << NC << ", ";
     cout << YELLOW << z << NC << " ] ";
@@ -20,8 +32,12 @@ void print_eluler_angles(Vector3ld ea)
 void print_joints(vector<long double> joints)
 {
     cout << BLUE << "Joints: " << NC << " [ ";
-    for(auto it : joints)
-        cout << it << " ";
+    cout << YELLOW << joints[0] << NC << ", ";
+    cout << YELLOW << joints[1] << NC << ", ";
+    cout << YELLOW << joints[2] << NC << ", ";
+    cout << YELLOW << joints[3] << NC << ", ";
+    cout << YELLOW << joints[4] << NC << ", ";
+    cout << YELLOW << joints[5] << NC << " ";
     cout << "]" << endl;
 }
 
@@ -35,7 +51,7 @@ void print_desidered_joints(Vector6ld joints)
 
 void print_gripper_status()
 {
-    cout << "Gripper state: " << gripperState << endl;
+    cout << BLUE << "Gripper state: " << NC << " [ " << YELLOW << gripperState << NC << " ]" << endl;
 }
 
 void print_robot_status()
@@ -45,7 +61,8 @@ void print_robot_status()
     pair<Vector3ld, Matrix3ld> forward = computeForwardKinematics(jointState);
     print_position(forward.first(0), forward.first(1), forward.first(2));
     print_eluler_angles(radToDeg(matrixToEuler(forward.second)));
-    print_gripper_status();
+    if(gripper)
+        print_gripper_status();
     cout << endl << "----------------------------------------------------------" << endl << endl;
 }
 
@@ -125,7 +142,8 @@ void set_subscribers(ros::NodeHandle n)
     subscribers[3] = n.subscribe("/wrist_1_joint_position_controller/state", queue_size, get_position_wrist_1);
     subscribers[4] = n.subscribe("/wrist_2_joint_position_controller/state", queue_size, get_position_wrist_2);
     subscribers[5] = n.subscribe("/wrist_3_joint_position_controller/state", queue_size, get_position_wrist_3);
-    gripperSubscriber = n.subscribe("/gripper_controller/state", queue_size, get_position_gripper);
+    if(gripper)
+        gripperSubscriber = n.subscribe("/gripper_controller/state", queue_size, get_position_gripper);
 }
 
 void set_publishers(ros::NodeHandle n)
@@ -136,7 +154,8 @@ void set_publishers(ros::NodeHandle n)
 	publishers[3] = n.advertise<std_msgs::Float64>("/wrist_1_joint_position_controller/command", queue_size);
 	publishers[4] = n.advertise<std_msgs::Float64>("/wrist_2_joint_position_controller/command", queue_size);
 	publishers[5] = n.advertise<std_msgs::Float64>("/wrist_3_joint_position_controller/command", queue_size);
-    gripperPublisher = n.advertise<std_msgs::Float64>("/gripper_controller/command", queue_size);
+    if(gripper)
+        gripperPublisher = n.advertise<std_msgs::Float64>("/gripper_controller/command", queue_size);
 }
 
 void get_position_shoulder_pan(const control_msgs::JointControllerState::ConstPtr& ctr_msg) {jointState[0] = ctr_msg->process_value;}

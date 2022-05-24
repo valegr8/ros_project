@@ -28,7 +28,3 @@ wrist_3_joint_position_controller:
   type: effort_controllers/JointPositionController
   joint: wrist_3_joint
   pid: {p: 100.0, i: 0.1, d: 10.0, i_clamp_min: -100.0, i_clamp_max: 100.0}
-gripper_controller:
-  type: effort_controllers/JointPositionController
-  joint: robotiq_85_left_knuckle_joint
-  pid: {p: 40, d: 0, i: 0, i_clamp: 1}
