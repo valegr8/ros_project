@@ -19,10 +19,20 @@
 #include <control_msgs/JointControllerState.h> //Control messages
 #include <control_msgs/GripperCommandActionGoal.h> //Gripper control
 
+#include <std_msgs/Float64.h>
+
+#include <gazebo/gazebo.hh>
+/*
+#include "gazebo/common/Plugin.hh"
+#include "gazebo/msgs/msgs.hh"
+#include "gazebo/physics/physics.hh"
+#include "gazebo/transport/transport.hh"
+*/
+
 #include <eigen3/Eigen/Core>//Eigen3 header - for matrix calculation
 #include <eigen3/Eigen/Dense>
 
-#include <std_msgs/Float64.h>
+
 
 using namespace Eigen;
 using namespace std;

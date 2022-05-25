@@ -124,8 +124,10 @@ find_package (Eigen3 REQUIRED)
  ## Your package locations should be listed before other locations
  include_directories(
    include
+   ${GAZEBO_INCLUDE_DIRS}
    ${catkin_INCLUDE_DIRS}
    ${Eigen_INCLUDE_DIRS}
+   
  )
  
  ## Declare a C++ library
