@@ -49,62 +49,128 @@ int main (int argc, char **argv)
     cout << endl << "----------------------------------------------------------" << endl << endl;
 
     //Modalità in cui inserisci i valori e vai al punto inserito
-    askUserGoToPoint(loop_rate);
+    //askUserGoToPoint(loop_rate);
 
-    //Modalità in cui il robot prende il cubo centrale
-    //pigliaCuboCentrale(loop_rate);
+    //Modalità in cui il robot prende i cubi e li impila
+    pigliaCuboCentrale(loop_rate, nodeHandle);
 
     //ROS_ERROR("Ros not working\n");
     return 1; 
 }
 
-void pigliaCuboCentrale(ros::Rate& loop_rate)
+void pigliaCuboCentrale(ros::Rate& loop_rate, ros::NodeHandle nodeHandle)
 {
     cout << BLUE << "***  MODALITA' PIGLIA CUBO CENTRALE  ***" << NC << endl << endl;
-
     mySleep(loop_rate);
 
+    //Nozioni
     //Il cubo centrale è a x:0 y:0.5, z < 0.25
-    //End effector punato in giù 
-    //Roll : 180°, pitch: 0°, yaw:0°
+    //Il cubo a sinistra è a x:-0.16 y:0.5 z < 0.25
+    //Il cubo a destra è a x:0.16 y:0.5 z < 0.25
+    //End effector punato in giù : Roll : 180°, pitch: 0°, yaw:0°
+    //N.B. Roll, Pith, Yaw non sono univoci
+    //Un'altra possibile opzioni per puntare in giù l'end effector è Roll : 0°, pitch: 180°, yaw: 180°
+    //Questo link sotto è un simulatore, non utilizza i nostri stessi riferimenti ma fa capire il concetto
+    //https://compsci290-s2016.github.io/CoursePage/Materials/EulerAnglesViz/
+    //Yaw a 45° è l'angolo giusto per prendere un cubo
+    //Il robot è relativamente preciso ma, quando si devono fare certe distanze conviene coprire la maggiorparte della distanza
+    //con un primo movimento (es. posizionarsi sopra il cubo) e con un secondo movimento molto più breve (quindi più preciso)
+    //afferrare l'oggetto.
 
-    cout << "Mi posizione sopra il cubo {0.0, 0.5, 0.4} {180.0, 0.0, 45.0}" << endl;
-    //Mi posizione sopra il cubo
-    pointToPointMotionPlan(make_pair(Vector3ld{0.0, 0.5, 0.4}, degToRad(Vector3ld{180.0, 0.0, 45.0})), loop_rate, 0.0, 1.0, 0.01);
+    //Prendo cubo 1
+    {
+        cout << "Mi posizione sopra il cubo 1 {0.0, 0.5, 0.4} {180.0, 0.0, 45.0}" << endl;
+        pointToPointMotionPlan(make_pair(Vector3ld{0.0, 0.5, 0.4}, degToRad(Vector3ld{180.0, 0.0, 45.0})), loop_rate, 0.0, 1.0, 0.01);
+        mySleep(loop_rate);
 
-    cout << "Apro gripper 0.0" << endl;
-    //Apro il gripper
-    gripper_set(0.0, loop_rate);
+        cout << "Apro gripper 0.0" << endl;
+        gripper_set(0.0, loop_rate);
 
-    print_robot_status();
-    
-    cout << "Prendo il cubo {0.0, 0.5, 0.175} {180.0, 0.0, 45.0}" << endl;
-    //Prendo il cubo
-    pointToPointMotionPlan(make_pair(Vector3ld{0.0, 0.5, 0.175}, degToRad(Vector3ld{180.0, 0.0, 45.0})), loop_rate, 0.0, 1.0, 0.01);
-    
-    mySleep(loop_rate);
+        cout << "Prendo il cubo {0.0, 0.5, 0.175} {180.0, 0.0, 45.0}" << endl;
+        pointToPointMotionPlan(make_pair(Vector3ld{0.0, 0.5, 0.175}, degToRad(Vector3ld{180.0, 0.0, 45.0})), loop_rate, 0.0, 1.0, 0.01);
+        mySleep(loop_rate);
 
-    cout << "Chudo gripper {0.26}" << endl;
-    //Chiudo il gripper
-    gripper_set(0.26, loop_rate);
+        cout << "Chudo gripper {0.20}" << endl;
+        gripper_set(0.20, loop_rate);
 
-    print_robot_status();
+        cout << "Creo link dinamico robot - cube1" << endl;
+        createDynamicLink(nodeHandle, "robot" , "cube1", "wrist_3_link", "link");
 
-    cout << "Alzo il cubo {0.0, 0.5, 0.5} {180.0, 0.0, 45.0}" << endl;
-    //Lo alzo
-    pointToPointMotionPlan(make_pair(Vector3ld{0.0, 0.5, 0.5}, degToRad(Vector3ld{180.0, 0.0, 45.0})), loop_rate, 0.0, 1.0, 0.01);
+        cout << "Alzo il cubo {0.0, 0.5, 0.4} {180.0, 0.0, 45.0}" << endl;
+        pointToPointMotionPlan(make_pair(Vector3ld{0.0, 0.5, 0.4}, degToRad(Vector3ld{180.0, 0.0, 45.0})), loop_rate, 0.0, 1.0, 0.01);
+        mySleep(loop_rate);
 
-    print_robot_status();
+        mySleep(loop_rate);
+        print_robot_status();
+    }
 
-    cout << "Mi sposto fuori dal tavolo {0.5, 0.5, 0.5} {180.0, 0.0, 45.0}" << endl;
-    //Mi sposto fuori dal tavolo
-    pointToPointMotionPlan(make_pair(Vector3ld{0.5, 0.5, 0.5}, degToRad(Vector3ld{180.0, 0.0, 45.0})), loop_rate, 0.0, 1.0, 0.01);
+    //Metto cubo 1 su cubo 3
+    {
+        cout << "Mi posizione sopra il cubo 3 {-0.16, 0.5, 0.4} {180.0, 0.0, 45.0}" << endl;
+        pointToPointMotionPlan(make_pair(Vector3ld{-0.16, 0.5, 0.4}, degToRad(Vector3ld{180.0, 0.0, 45.0})), loop_rate, 0.0, 1.0, 0.01);
+        mySleep(loop_rate);
 
-    cout << "Apro gripper {0.0}" << endl;
-    //Apro il gripper
-    gripper_set(0.0, loop_rate);
+        cout << "Impilo il cubo {-0.16, 0.5, 0.225} {180.0, 0.0, 45.0}" << endl;
+        pointToPointMotionPlan(make_pair(Vector3ld{-0.16, 0.5, 0.225}, degToRad(Vector3ld{180.0, 0.0, 45.0})), loop_rate, 0.0, 1.0, 0.01);
+        mySleep(loop_rate);
 
-    print_robot_status();
+        cout << "Distruggo link dinamico wrist_3_joint - cube1" << endl;
+        destroyDynamicLink(nodeHandle, "robot" , "cube1", "wrist_3_link", "link");
+
+        cout << "Apro gripper {0.0}" << endl;
+        gripper_set(0.0, loop_rate);
+
+        mySleep(loop_rate);
+        print_robot_status();
+    }
+
+    //Prendo cubo 2
+    {
+        cout << "Mi posizione sopra il cubo 2 {0.16, 0.5, 0.4} {180.0, 0.0, 45.0}" << endl;
+        pointToPointMotionPlan(make_pair(Vector3ld{0.16, 0.5, 0.4}, degToRad(Vector3ld{180.0, 0.0, 45.0})), loop_rate, 0.0, 1.0, 0.01);
+        mySleep(loop_rate);
+
+        cout << "Apro gripper 0.0" << endl;
+        gripper_set(0.0, loop_rate);
+
+        cout << "Prendo il cubo {0.16, 0.5, 0.175} {180.0, 0.0, 45.0}" << endl;
+        pointToPointMotionPlan(make_pair(Vector3ld{0.16, 0.5, 0.175}, degToRad(Vector3ld{180.0, 0.0, 45.0})), loop_rate, 0.0, 1.0, 0.01);
+        mySleep(loop_rate);
+
+        cout << "Chudo gripper {0.20}" << endl;
+        gripper_set(0.20, loop_rate);
+
+        cout << "Creo link dinamico robot - cube2" << endl;
+        createDynamicLink(nodeHandle, "robot" , "cube2", "wrist_3_link", "link");
+
+        cout << "Alzo il cubo {0.16, 0.5, 0.4} {180.0, 0.0, 45.0}" << endl;
+        pointToPointMotionPlan(make_pair(Vector3ld{0.16, 0.5, 0.4}, degToRad(Vector3ld{180.0, 0.0, 45.0})), loop_rate, 0.0, 1.0, 0.01);
+        mySleep(loop_rate);
+
+        mySleep(loop_rate);
+        print_robot_status();
+    }
+
+
+    //Metto cubo 2 su cubo 1 che è su cubo 3
+    {
+        cout << "Mi posizione sopra il cubo 3 {-0.16, 0.5, 0.4} {180.0, 0.0, 45.0}" << endl;
+        pointToPointMotionPlan(make_pair(Vector3ld{-0.16, 0.5, 0.4}, degToRad(Vector3ld{180.0, 0.0, 45.0})), loop_rate, 0.0, 1.0, 0.01);
+        mySleep(loop_rate);
+
+        cout << "Impilo il cubo {-0.16, 0.5, 0.275} {180.0, 0.0, 45.0}" << endl;
+        pointToPointMotionPlan(make_pair(Vector3ld{-0.16, 0.5, 0.275}, degToRad(Vector3ld{180.0, 0.0, 45.0})), loop_rate, 0.0, 1.0, 0.01);
+        mySleep(loop_rate);
+
+        cout << "Distruggo link dinamico wrist_3_joint - cube2" << endl;
+        destroyDynamicLink(nodeHandle, "robot" , "cube2", "wrist_3_link", "link");
+
+        cout << "Apro gripper {0.0}" << endl;
+        gripper_set(0.0, loop_rate);
+
+        mySleep(loop_rate);
+        print_robot_status();
+    }
 }
 
 void askUserGoToPoint(ros::Rate& loop_rate)

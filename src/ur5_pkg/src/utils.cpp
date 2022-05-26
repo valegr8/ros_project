@@ -134,6 +134,41 @@ void gripper_set(long double gripperValueToSet, ros::Rate& loop_rate)
     ros::spinOnce();
 }
 
+bool createDynamicLink(ros::NodeHandle nodeHandle, string name1, string name2, string link1, string link2)
+{
+    //Loading the client for the plugin
+    ros::ServiceClient client = nodeHandle.serviceClient<gazebo_ros_link_attacher::Attach>("/link_attacher_node/attach");
+
+    //Create dynamic link
+    return dynamicLinkAction(client, name1, name2, link1, link2);
+}
+
+bool destroyDynamicLink(ros::NodeHandle nodeHandle, string name1, string name2, string link1, string link2)
+{
+    //Loading the client for the plugin
+    ros::ServiceClient client = nodeHandle.serviceClient<gazebo_ros_link_attacher::Attach>("/link_attacher_node/detach");
+
+    //Destroy dynamic link
+    return dynamicLinkAction(client, name1, name2, link1, link2);
+}
+
+bool dynamicLinkAction(ros::ServiceClient client, string name1, string name2, string link1, string link2)
+{
+    //Creating request and response
+    gazebo_ros_link_attacher::AttachRequest req;
+    gazebo_ros_link_attacher::AttachResponse res;
+
+    //Filling the request
+    req.model_name_1 = name1;
+    req.model_name_2 = name2;
+    req.link_name_1 = link1;
+    req.link_name_2 = link2;
+
+    client.call(req, res);
+
+    return res.ok;
+}
+
 void set_subscribers(ros::NodeHandle n)
 {
     subscribers[0] = n.subscribe("/shoulder_pan_joint_position_controller/state", queue_size, get_position_shoulder_pan);

@@ -17,6 +17,7 @@
 )
 
 find_package (Eigen3 REQUIRED)
+find_package (gazebo_ros_link_attacher REQUIRED)
  
  ## System dependencies are found with CMake's conventions
  # find_package(Boost REQUIRED COMPONENTS system)
@@ -127,9 +128,9 @@ find_package (Eigen3 REQUIRED)
    ${GAZEBO_INCLUDE_DIRS}
    ${catkin_INCLUDE_DIRS}
    ${Eigen_INCLUDE_DIRS}
-   
+   ${gazebo_ros_link_attacher_INCLUDE_DIRS}
  )
- 
+
  ## Declare a C++ library
  # add_library(${PROJECT_NAME}
  #   src/${PROJECT_NAME}/beginner_tutorials.cpp

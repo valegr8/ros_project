@@ -18,8 +18,10 @@
 #include <ros/ros.h> //ros header
 #include <control_msgs/JointControllerState.h> //Control messages
 #include <control_msgs/GripperCommandActionGoal.h> //Gripper control
-
 #include <std_msgs/Float64.h> //Joints and gripper comunication
+#include <gazebo_ros_link_attacher/Attach.h> //Dynamic-link plugin header
+#include <gazebo_ros_link_attacher/AttachRequest.h> //Dynamic-link plugin header
+#include <gazebo_ros_link_attacher/AttachResponse.h> //Dynamic-link plugin header
 
 #include <eigen3/Eigen/Core>//Eigen3 header - for matrix calculation
 #include <eigen3/Eigen/Dense>
@@ -95,6 +97,11 @@ void set_subscribers(ros::NodeHandle);
 //Controllo gripper
 void gripper_set(long double, ros::Rate&);
 
+//Creazione link dinamici
+bool createDynamicLink(ros::NodeHandle, string, string, string = "link", string = "link");
+bool destroyDynamicLink(ros::NodeHandle, string, string, string = "link", string = "link");
+bool dynamicLinkAction(ros::ServiceClient, string, string, string = "link", string = "link");
+
 //Funzione movimento
 bool pointToPointMotionPlan(pair<Vector3ld, Vector3ld>, ros::Rate&, long double, long double, long double);
 bool pointToPointMotionPlan(pair<Vector3ld, Matrix3ld>, ros::Rate&, long double, long double, long double);
@@ -113,7 +120,7 @@ Matrix4ld transform54(long double);
 Matrix4ld transform65(long double);
 
 //Metodi temporanei di testing
-void pigliaCuboCentrale(ros::Rate&);
+void pigliaCuboCentrale(ros::Rate&, ros::NodeHandle);
 void askUserGoToPoint(ros::Rate&);
 void mySleep(ros::Rate&);
 
