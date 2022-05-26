@@ -18,15 +18,11 @@ Fast all-in-one command:
 	catkin build --env-cache && source devel/setup.bash && clear && rosrun ur5_pkg node
 	source devel/setup.bash && clear && rosrun ur5_pkg node
 
-To launch gazebo:
+To launch the dynamic link plugin:
 
-	roslaunch gazebo_ros_link_attacher test_attacher.launch
-
-For spawn boxes:
-
-	source devel/setup.bash && clear && rosrun gazebo_ros_link_attacher spawn_models.py
-
-To create dynamic link:
-
-	source devel/setup.bash && clear && rosrun gazebo_ros_link_attacher attach.py
-	source devel/setup.bash && clear && rosrun gazebo_ros_link_attacher detach.py
+	catkin build --env-cache && source devel/setup.bash && clear && roslaunch gazebo_ros_link_attacher test_attacher.launch
+	
+	source devel/setup.bash 
+	rosrun gazebo_ros_link_attacher spawn_models.py
+	rosrun gazebo_ros_link_attacher attach.py
+	rosrun gazebo_ros_link_attacher detach.py
