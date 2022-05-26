@@ -17,17 +17,3 @@ Fast all-in-one command:
 
 	catkin build --env-cache && source devel/setup.bash && clear && rosrun ur5_pkg node
 	source devel/setup.bash && clear && rosrun ur5_pkg node
-
-To use the dynamic-link plugin:
-
-Attaccare:
-rosservice call /link_attacher_node/attach "model_name_1: 'cube1'
-link_name_1: 'link'
-model_name_2: 'cube2'
-link_name_2: 'link'"
-
-Staccare:
-rosservice call /link_attacher_node/detach "model_name_1: 'cube1'
-link_name_1: 'link'
-model_name_2: 'cube2'
-link_name_2: 'link'"
