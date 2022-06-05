@@ -85,7 +85,7 @@
         <collision name="collision">
           <geometry>
             <mesh>
-              <uri>model://X1-Y2-Z2.stl</uri>
+              <uri>model://X1-Y2-Z2-TWINFILLET.stl</uri>
               <scale>0.0025 0.0025 0.0025</scale>
             </mesh>
           </geometry>
@@ -93,7 +93,7 @@
         <visual name="visual">
           <geometry>
             <mesh>
-              <uri>model://X1-Y2-Z2.stl</uri>
+              <uri>model://X1-Y2-Z2-TWINFILLET.stl</uri>
               <scale>0.0025 0.0025 0.0025</scale>
             </mesh>
           </geometry>

@@ -1,6 +1,7 @@
 from __future__ import print_function
 from pathlib import Path
 import struct
+from time import sleep
 from sensor_msgs.msg import PointCloud2
 from std_msgs.msg import String
 from sensor_msgs.msg import Image
@@ -8,7 +9,7 @@ from cv_bridge import CvBridge, CvBridgeError
 import argparse
 import os
 import sys
-
+import json
 import sys
 import rospy
 import cv2
@@ -102,8 +103,7 @@ def run(
         dt[2] += time_sync() - t3
         ptcl = locateObj()
         # Second-stage classifier (optional)
-        # pred = utils.general.apply_classifier(pred, classifier_model, im, im0s)
-
+        jsn = '{"obj": ['
         # Process predictions
         for i, det in enumerate(pred):  # per image
             seen += 1
@@ -136,6 +136,7 @@ def run(
                     #print(names[c] + ' ' + str(round(xywh[0] * 1920)) + ' ' + str(round(xywh[1] * 1080)))
                     pos = ptcl.getPosition(round(xywh[0] * 1920),round(xywh[1] * 1080))
                     print(names[c] + '-> X: ' + str(pos[0]) + ' Y:' + str(pos[1]) + ' Z:' + str(pos[2]))
+                    jsn += '{"name": "'+ names[c] +'", "x":'+str(pos[0]) +',  "y":'+str(pos[1]) +', "z":'+str(pos[2]) +'},'
                     label = None if hide_labels else f'{names[c]} {conf:.2f}'
                     annotator.box_label(xyxy, label, color=colors(c, True))
 
@@ -148,10 +149,11 @@ def run(
             # Save results (image with detections)
             if save_img:
                 cv2.imwrite(save_path, im0)
-
-
+        jsn = jsn[:-1]
+        jsn += ']}'
         # Print time (inference-only)
         LOGGER.info(f'{s}Done. ({t3 - t2:.3f}s)')
+        return str(jsn)
 
     # Print results
     t = tuple(x / seen * 1E3 for x in dt)  # speeds per image
@@ -244,22 +246,30 @@ class locateObj:
         return (round(X,2), round(Y,2), round(Z,2))
 
 
+def objDetect():
+    pub = rospy.Publisher('objDetect', String,queue_size=1)
+    rate = rospy.Rate(1)
+    while not rospy.is_shutdown():
+        pub.publish(runObjLoc())
+        sleep(1)
 
-
-
-def main(opt):
-    # Initialize
-    rospy.init_node('objectDetector', anonymous=False)
+def runObjLoc():
     camera = TakePhoto()
     img_title = rospy.get_param('~image_title', 'photo.jpg')
 
     if camera.take_picture(img_title):
         #rcheck_requirements(exclude=('tensorboard', 'thop'))
-        run(**vars(opt))
+         return run(**vars(opt))
     else:
         rospy.loginfo("No images received")
     # Sleep to give the last log messages time to be sent
     rospy.sleep(1)
+
+
+def main(opt):
+    # Initialize
+    rospy.init_node('objectDetector', anonymous=False)
+    objDetect()
 
 
 if __name__ == "__main__":
