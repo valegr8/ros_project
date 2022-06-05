@@ -1,6 +1,7 @@
 from __future__ import print_function
 from pathlib import Path
-
+import struct
+from sensor_msgs.msg import PointCloud2
 from std_msgs.msg import String
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
@@ -61,8 +62,7 @@ def run(
 ):
     source = 'photo.jpg'
     save_img = not nosave and not source.endswith('.txt')  # save inference images
-    is_file = Path(source).suffix[1:] in (IMG_FORMATS + VID_FORMATS)
-
+    conf_thres = 0.4
     # Directories
     save_dir = '/home/davide/rosProg/ros_project/src/computerVision/img_lbl'
 
@@ -100,7 +100,7 @@ def run(
         # NMS
         pred = non_max_suppression(pred, conf_thres, iou_thres, classes, agnostic_nms, max_det=max_det)
         dt[2] += time_sync() - t3
-
+        ptcl = locateObj()
         # Second-stage classifier (optional)
         # pred = utils.general.apply_classifier(pred, classifier_model, im, im0s)
 
@@ -132,14 +132,18 @@ def run(
                     with open(f'{txt_path}.txt', 'a') as f:
                         f.write(('%g ' * len(line)).rstrip() % line + '\n')
                     c = int(cls)  # integer class
-                    label = None if hide_labels else (names[c] if hide_conf else f'{names[c]} {conf:.2f}')
+                    #print(('%g ' * len(line)).rstrip() % line) #print label and position
+                    #print(names[c] + ' ' + str(round(xywh[0] * 1920)) + ' ' + str(round(xywh[1] * 1080)))
+                    pos = ptcl.getPosition(round(xywh[0] * 1920),round(xywh[1] * 1080))
+                    print(names[c] + '-> X: ' + str(pos[0]) + ' Y:' + str(pos[1]) + ' Z:' + str(pos[2]))
+                    label = None if hide_labels else f'{names[c]} {conf:.2f}'
                     annotator.box_label(xyxy, label, color=colors(c, True))
 
             # Stream results
             im0 = annotator.result()
             if view_img:
                 cv2.imshow(str(p), im0)
-                cv2.waitKey(1)  # 1 millisecond1
+                cv2.waitKey(100)  # 1 millisecond1
 
             # Save results (image with detections)
             if save_img:
@@ -155,6 +159,10 @@ def run(
     if save_txt or save_img:
         s = f"\n{len(list(save_dir.glob('labels/*.txt')))} labels saved to {save_dir / 'labels'}" if save_txt else ''
         LOGGER.info(f"Results saved to {colorstr('bold', save_dir)}{s}")
+
+
+
+
 
 
 def parse_opt():
@@ -187,7 +195,6 @@ def parse_opt():
     parser.add_argument('--dnn', action='store_true', help='use OpenCV DNN for ONNX inference')
     opt = parser.parse_args()
     opt.imgsz *= 2 if len(opt.imgsz) == 1 else 1  # expand
-    print_args(vars(opt))
     return opt
 
 class TakePhoto:
@@ -222,10 +229,27 @@ class TakePhoto:
         else:
             return False
 
+class locateObj:
+    ptcloud = None
+
+    def __init__(self):
+        self.ptcloud = rospy.wait_for_message("/camera/depth/points", PointCloud2, timeout=None) 
+       
+        
+
+    def getPosition(self,px,py):
+        assert isinstance(self.ptcloud , PointCloud2)
+        index = (py*self.ptcloud.row_step) + (px*self.ptcloud.point_step)
+        (X, Y, Z) = struct.unpack_from('fff', self.ptcloud.data, offset=index)
+        return (round(X,2), round(Y,2), round(Z,2))
+
+
+
+
 
 def main(opt):
     # Initialize
-    rospy.init_node('take_photo', anonymous=False)
+    rospy.init_node('objectDetector', anonymous=False)
     camera = TakePhoto()
     img_title = rospy.get_param('~image_title', 'photo.jpg')
 
@@ -236,8 +260,6 @@ def main(opt):
         rospy.loginfo("No images received")
     # Sleep to give the last log messages time to be sent
     rospy.sleep(1)
-
-    
 
 
 if __name__ == "__main__":
