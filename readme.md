@@ -17,3 +17,7 @@ Fast all-in-one command:
 
 	catkin build --env-cache && source devel/setup.bash && clear && rosrun ur5_pkg node
 	source devel/setup.bash && clear && rosrun ur5_pkg node
+
+Add to .bashrc:
+
+	export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:{$WORK_DIR}/ros_project/src/ur5_pkg/models
