@@ -21,3 +21,12 @@ Fast all-in-one command:
 Add to .bashrc:
 
 	export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:{$WORK_DIR}/ros_project/src/ur5_pkg/models
+	
+	
+Install python dependences:
+
+	pip3 install torch torchvision
+	sudo apt install python3-pandas
+	sudo apt install python3-tqdm
+	pip install seaborn
+	
