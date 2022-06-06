@@ -22,7 +22,7 @@
 #include <gazebo_ros_link_attacher/Attach.h> //Dynamic-link plugin header
 #include <gazebo_ros_link_attacher/AttachRequest.h> //Dynamic-link plugin header
 #include <gazebo_ros_link_attacher/AttachResponse.h> //Dynamic-link plugin header
-
+#include "std_msgs/String.h"
 #include <eigen3/Eigen/Core>//Eigen3 header - for matrix calculation
 #include <eigen3/Eigen/Dense>
 
@@ -45,7 +45,7 @@ typedef Matrix<long double, Dynamic, Dynamic> MatrixXld; // dynamic matrix
 
 //Definizioni costanti
 const int JOINT_NUM = 6; //number of joint for ur5
-const double LOOP_RATE_FREQUENCY = 10;  //< used to set run loops frequency
+const double LOOP_RATE_FREQUENCY = 30;  //< used to set run loops frequency
 const long double PI = 3.14159265359; //pi value
 const long double PIMEZZI = 1.57079632679; //pi/2 value
 const string GREEN = "\033[0;92m";

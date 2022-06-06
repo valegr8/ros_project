@@ -1,4 +1,6 @@
 #include <ur5_pkg/utils.h>
+#include <ur5_pkg/json.hpp>
+using json = nlohmann::json;
 
 //Variabili globali
 vector<ros::Subscriber> subscribers(JOINT_NUM); //< global subscribers vector
@@ -10,6 +12,9 @@ long double gripperState; // contains state values of the gripper
 int queue_size; // used for publisher and subscribers queue size 
 bool debug = true; //For debug
 bool gripper = true; //For gripper present
+json posData;
+
+void moveLegoToPos(ros::Rate& loop_rate,ros::NodeHandle nodeHandle);
 
 int main (int argc, char **argv)
 {
@@ -48,14 +53,105 @@ int main (int argc, char **argv)
 
     cout << endl << "----------------------------------------------------------" << endl << endl;
 
+    
+
+    moveLegoToPos(loop_rate,nodeHandle);
     //Modalità in cui inserisci i valori e vai al punto inserito
     //askUserGoToPoint(loop_rate);
-
     //Modalità in cui il robot prende i cubi e li impila
-    pigliaCuboCentrale(loop_rate, nodeHandle);
+    //pigliaCuboCentrale(loop_rate, nodeHandle);
 
     //ROS_ERROR("Ros not working\n");
     return 1; 
+}
+
+
+bool ok =  true;
+
+void getData(const std_msgs::String::ConstPtr& msg){
+    try{
+        if(ok){
+        posData = json::parse(msg->data.c_str());
+        ok= false;
+        }
+
+    }catch (int e){}
+   
+}
+
+void moveLegoToPos(ros::Rate& loop_rate,ros::NodeHandle nodeHandle){
+    string str; //Usata per leggere
+    pair<Vector3ld, Vector3ld> to; //Per la posizione finale
+    long double gripperValue = 0;
+    cout << BLUE << "***  MODALITA' SMART  ***" << NC << endl << endl;
+    cout << GREEN << "Getting position data..." << NC << endl << endl;
+    ros::Rate loop_rateDetection(1);
+
+    ros::Subscriber nVis = nodeHandle.subscribe("objDetect",2, getData);
+    ros::spinOnce();
+    mySleep(loop_rateDetection);
+    
+    cout << posData.dump(2)<< endl;
+    string name = posData["obj"][0]["name"];
+    float x = posData["obj"][0]["x"];
+    //float y = posData["obj"][0]["y"];
+    float y = 0.6;
+
+
+    //prendo il primo blocco lego
+    {
+    cout << "Mi posizione sopra "<< name  << " -> x: "<< x << " y: "<< y << endl;
+    pointToPointMotionPlan(make_pair(Vector3ld{x, y, 0.4}, degToRad(Vector3ld{180.0, 0.0, 45.0})), loop_rate, 0.0, 1.0, 0.01);
+    mySleep(loop_rate);
+
+    cout << "Apro gripper 0.0" << endl;
+    gripper_set(0.0, loop_rate);
+
+    cout << "Prendo "<< name  << " -> x: "<< x << " y: "<< y << endl;
+    pointToPointMotionPlan(make_pair(Vector3ld{x, y, 0.3}, degToRad(Vector3ld{180.0, 0.0, 45.0})), loop_rate, 0.0, 1.0, 0.01);
+    mySleep(loop_rate);
+
+    cout << "Chudo gripper {0.20}" << endl;
+    gripper_set(0.20, loop_rate);
+
+    cout << "Creo link dinamico robot - " << name<< endl;
+    createDynamicLink(nodeHandle, "robot" , name, "wrist_3_link", "link");
+
+    cout << "Alzo  "<< name  << " -> x: "<< x << " y: "<< y << endl;
+    pointToPointMotionPlan(make_pair(Vector3ld{x, y, 0.4}, degToRad(Vector3ld{180.0, 0.0, 45.0})), loop_rate, 0.0, 1.0, 0.01);
+    mySleep(loop_rate);
+
+    mySleep(loop_rate);
+    print_robot_status();
+    }
+
+    cout << "Inserisci x: ";
+    cin >> to.first(0);
+    cout << "Inserisci y: ";
+    cin >> to.first(1);
+    cout << "Inserisci z: ";
+    cin >> to.first(2);
+
+    cout << "Mi posizione sopra la posizione scelta" << endl;
+    pointToPointMotionPlan(make_pair(Vector3ld{to.first(0), to.first(1), to.first(2)}, degToRad(Vector3ld{180.0, 0.0, 45.0})), loop_rate, 0.0, 1.0, 0.01);
+    mySleep(loop_rate);
+
+    cout << "Impilo il cubo {-0.16, 0.5, 0.225} {180.0, 0.0, 45.0}" << endl;
+    pointToPointMotionPlan(make_pair(Vector3ld{to.first(0), to.first(1), to.first(2)}, degToRad(Vector3ld{180.0, 0.0, 45.0})), loop_rate, 0.0, 1.0, 0.01);
+    mySleep(loop_rate);
+
+    cout << "Apro gripper {0.0}" << endl;
+    gripper_set(0.0, loop_rate);
+
+    cout << "Distruggo link dinamico wrist_3_joint - " << name << endl;
+    destroyDynamicLink(nodeHandle, "robot" , name, "wrist_3_link", "link");
+
+
+
+    mySleep(loop_rate);
+    print_robot_status();
+
+
 }
 
 void pigliaCuboCentrale(ros::Rate& loop_rate, ros::NodeHandle nodeHandle)

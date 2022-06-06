@@ -11,7 +11,7 @@
     </include>
 
     <model name="X1-Y1-Z2">
-      <pose>-0.16 0.55 1.05 0 0 0</pose>
+      <pose>0 0.6 1.05 0 0 0</pose>
       <link name="link">
         <inertial>
           <mass>0.1</mass>
@@ -40,66 +40,7 @@
       </link>
     </model>
 
-    <model name="X1-Y2-Z1">
-      <pose>0.16 0.55 1.05 0 0 0</pose>
-      <link name="link">
-        <inertial>
-          <mass>0.1</mass>
-          <inertia>
-            <ixx>0.000166667</ixx>
-            <iyy>0.000166667</iyy>
-            <izz>0.000166667</izz>
-          </inertia>
-        </inertial>
-        <collision name="collision">
-         <geometry>
-            <mesh>
-              <uri>model://X1-Y4-Z2.stl</uri>
-              <scale>0.0025 0.0025 0.0025</scale>
-            </mesh>
-          </geometry>
-        </collision>
-        <visual name="visual">
-          <geometry>
-            <mesh>
-              <uri>model://X1-Y4-Z2.stl</uri>
-              <scale>0.0025 0.0025 0.0025</scale>
-            </mesh>
-          </geometry>
-        </visual>
-      </link>
-    </model>
-    
-
-    <model name="X1-Y2-Z2">
-      <pose>0 0.55 1.05 0 0 0</pose>
-      <link name="link">
-        <inertial>
-          <mass>0.1</mass>
-          <inertia>
-            <ixx>0.000166667</ixx>
-            <iyy>0.000166667</iyy>
-            <izz>0.000166667</izz>
-          </inertia>
-        </inertial>
-        <collision name="collision">
-          <geometry>
-            <mesh>
-              <uri>model://X1-Y2-Z2-TWINFILLET.stl</uri>
-              <scale>0.0025 0.0025 0.0025</scale>
-            </mesh>
-          </geometry>
-        </collision>
-        <visual name="visual">
-          <geometry>
-            <mesh>
-              <uri>model://X1-Y2-Z2-TWINFILLET.stl</uri>
-              <scale>0.0025 0.0025 0.0025</scale>
-            </mesh>
-          </geometry>
-        </visual>
-      </link>
-    </model>
+ 
 
 
     
