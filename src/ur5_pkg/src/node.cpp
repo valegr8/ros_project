@@ -136,10 +136,6 @@ void moveLegoToPos(ros::Rate& loop_rate,ros::NodeHandle nodeHandle){
     pointToPointMotionPlan(make_pair(Vector3ld{to.first(0), to.first(1), to.first(2)}, degToRad(Vector3ld{180.0, 0.0, 45.0})), loop_rate, 0.0, 1.0, 0.01);
     mySleep(loop_rate);
 
-    cout << "Impilo il cubo {-0.16, 0.5, 0.225} {180.0, 0.0, 45.0}" << endl;
-    pointToPointMotionPlan(make_pair(Vector3ld{to.first(0), to.first(1), to.first(2)}, degToRad(Vector3ld{180.0, 0.0, 45.0})), loop_rate, 0.0, 1.0, 0.01);
-    mySleep(loop_rate);
-
     cout << "Apro gripper {0.0}" << endl;
     gripper_set(0.0, loop_rate);
 

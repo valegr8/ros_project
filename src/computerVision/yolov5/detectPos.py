@@ -14,6 +14,7 @@ import sys
 import rospy
 import cv2
 import random
+import math
 
 import torch
 import torch.backends.cudnn as cudnn
@@ -63,7 +64,7 @@ def run(
 ):
     source = 'photo.jpg'
     save_img = not nosave and not source.endswith('.txt')  # save inference images
-    conf_thres = 0.4
+    conf_thres = 0.25
     # Directories
     save_dir = '/home/davide/rosProg/ros_project/src/computerVision/img_lbl'
 
@@ -243,7 +244,7 @@ class locateObj:
         assert isinstance(self.ptcloud , PointCloud2)
         index = (py*self.ptcloud.row_step) + (px*self.ptcloud.point_step)
         (X, Y, Z) = struct.unpack_from('fff', self.ptcloud.data, offset=index)
-        return (round(X,2), round(Y,2), round(Z,2))
+        return (round(X,3), round((Z*math.sin(0.78)-Y)+0.10,3), 1)
 
 
 def objDetect():
