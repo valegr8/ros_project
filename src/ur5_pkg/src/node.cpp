@@ -94,21 +94,20 @@ void moveLegoToPos(ros::Rate& loop_rate,ros::NodeHandle nodeHandle){
     cout << posData.dump(2)<< endl;
     string name = posData["obj"][0]["name"];
     float x = posData["obj"][0]["x"];
-    //float y = posData["obj"][0]["y"];
-    float y = 0.6;
+    float y = posData["obj"][0]["y"];
 
 
     //prendo il primo blocco lego
     {
     cout << "Mi posizione sopra "<< name  << " -> x: "<< x << " y: "<< y << endl;
-    pointToPointMotionPlan(make_pair(Vector3ld{x, y, 0.4}, degToRad(Vector3ld{180.0, 0.0, 45.0})), loop_rate, 0.0, 1.0, 0.01);
+    pointToPointMotionPlan(make_pair(Vector3ld{x, y, 0.5}, degToRad(Vector3ld{180.0, 0.0, 45.0})), loop_rate, 0.0, 1.0, 0.01);
     mySleep(loop_rate);
 
     cout << "Apro gripper 0.0" << endl;
     gripper_set(0.0, loop_rate);
 
     cout << "Prendo "<< name  << " -> x: "<< x << " y: "<< y << endl;
-    pointToPointMotionPlan(make_pair(Vector3ld{x, y, 0.3}, degToRad(Vector3ld{180.0, 0.0, 45.0})), loop_rate, 0.0, 1.0, 0.01);
+    pointToPointMotionPlan(make_pair(Vector3ld{x, y, 0.4}, degToRad(Vector3ld{180.0, 0.0, 45.0})), loop_rate, 0.0, 1.0, 0.01);
     mySleep(loop_rate);
 
     cout << "Chudo gripper {0.20}" << endl;
@@ -118,7 +117,7 @@ void moveLegoToPos(ros::Rate& loop_rate,ros::NodeHandle nodeHandle){
     createDynamicLink(nodeHandle, "robot" , name, "wrist_3_link", "link");
 
     cout << "Alzo  "<< name  << " -> x: "<< x << " y: "<< y << endl;
-    pointToPointMotionPlan(make_pair(Vector3ld{x, y, 0.4}, degToRad(Vector3ld{180.0, 0.0, 45.0})), loop_rate, 0.0, 1.0, 0.01);
+    pointToPointMotionPlan(make_pair(Vector3ld{x, y, 0.5}, degToRad(Vector3ld{180.0, 0.0, 45.0})), loop_rate, 0.0, 1.0, 0.01);
     mySleep(loop_rate);
 
     mySleep(loop_rate);
