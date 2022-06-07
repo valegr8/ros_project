@@ -10,7 +10,7 @@
       <uri>model://ground_plane</uri>
     </include>
 
-    <model name="X1-Y1-Z2">
+    <model name="X2-Y2-Z2-FILLET">
       <pose>0 0.6 1.05 0 0 0</pose>
       <link name="link">
         <inertial>
@@ -24,7 +24,7 @@
         <collision name="collision">
           <geometry>
             <mesh>
-              <uri>model://X1-Y1-Z2.stl</uri>
+              <uri>model://X2-Y2-Z2-FILLET.stl</uri>
               <scale>0.0025 0.0025 0.0025</scale>
             </mesh>
           </geometry>
@@ -32,7 +32,7 @@
         <visual name="visual">
           <geometry>
             <mesh>
-              <uri>model://X1-Y1-Z2.stl</uri>
+              <uri>model://X2-Y2-Z2-FILLET.stl</uri>
               <scale>0.0025 0.0025 0.0025</scale>
             </mesh>
           </geometry>

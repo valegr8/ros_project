@@ -59,7 +59,7 @@ int main (int argc, char **argv)
     //Modalità in cui inserisci i valori e vai al punto inserito
     //askUserGoToPoint(loop_rate);
     //Modalità in cui il robot prende i cubi e li impila
-    //pigliaCuboCentrale(loop_rate, nodeHandle);
+    // pigliaCuboCentrale(loop_rate, nodeHandle);
 
     //ROS_ERROR("Ros not working\n");
     return 1; 
@@ -107,7 +107,11 @@ void moveLegoToPos(ros::Rate& loop_rate,ros::NodeHandle nodeHandle){
     gripper_set(0.0, loop_rate);
 
     cout << "Prendo "<< name  << " -> x: "<< x << " y: "<< y << endl;
-    pointToPointMotionPlan(make_pair(Vector3ld{x, y, 0.4}, degToRad(Vector3ld{180.0, 0.0, 45.0})), loop_rate, 0.0, 1.0, 0.01);
+
+    // x y z of the end effector
+    Vector3ld end_effector = computeForwardKinematics(jointState).first;
+    cout << "x: " << end_effector(0) << " - y: "  << end_effector(1) << " - z: " <<end_effector(2) << endl;
+    pointToPointMotionPlan(make_pair(Vector3ld{x, y, 0.25}, degToRad(Vector3ld{180.0, 0.0, 45.0})), loop_rate, 0.0, 1.0, 0.01);
     mySleep(loop_rate);
 
     cout << "Chudo gripper {0.20}" << endl;
