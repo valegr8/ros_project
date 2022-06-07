@@ -244,7 +244,7 @@ class locateObj:
         assert isinstance(self.ptcloud , PointCloud2)
         index = (py*self.ptcloud.row_step) + (px*self.ptcloud.point_step)
         (X, Y, Z) = struct.unpack_from('fff', self.ptcloud.data, offset=index)
-        return (round(X,2), round((Z*math.sin(0.765)-Y)+0.10,2), 1)
+        return (round(X,2), round((Z*math.sin(0.7653)-Y)+0.10-0.5,2), 1)
 
 
 def objDetect():
