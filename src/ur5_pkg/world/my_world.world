@@ -24,7 +24,7 @@
         <collision name="collision">
           <geometry>
             <mesh>
-              <uri>model://X1-Y2-Z2.stl</uri>
+              <uri>model://X1-Y1-Z2.stl</uri>
               <scale>0.0025 0.0025 0.0025</scale>
             </mesh>
           </geometry>
@@ -39,14 +39,10 @@
         </visual>
       </link>
     </model>
-
- 
-
-
-    
-        <model name="camera">
+  
+    <model name="camera">
     <static>true</static>
-    <pose>0 0 2 0 0.75 1.57</pose>
+    <pose>0 -0.5 2.5 0 0.7853 1.57</pose>
     <link name="link">
       <inertial>
         <mass>0.1</mass>
