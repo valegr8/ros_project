@@ -64,7 +64,7 @@ def run(
 ):
     source = 'photo.jpg'
     save_img = not nosave and not source.endswith('.txt')  # save inference images
-    conf_thres = 0.25
+    conf_thres = 0.65
     # Directories
     save_dir = '/home/davide/rosProg/ros_project/src/computerVision/img_lbl'
 
@@ -136,16 +136,14 @@ def run(
                     #print(('%g ' * len(line)).rstrip() % line) #print label and position
                     #print(names[c] + ' ' + str(round(xywh[0] * 1920)) + ' ' + str(round(xywh[1] * 1080)))
                     pos = ptcl.getPosition(round(xywh[0] * 1920),round(xywh[1] * 1080))
-                    print(names[c] + '-> X: ' + str(pos[0]) + ' Y:' + str(pos[1]) + ' Z:' + str(pos[2]))
+                    print("\033[0;92m" + names[c] + "\033[0m" + '-> X: ' + str(pos[0]) + ' Y:' + str(pos[1]) + ' Z:' + str(pos[2]) + ' - Conf: ' + str(f'{conf:.2f}' ))
                     jsn += '{"name": "'+ names[c] +'", "x":'+str(pos[0]) +',  "y":'+str(pos[1]) +', "z":'+str(pos[2]) +'},'
                     label = None if hide_labels else f'{names[c]} {conf:.2f}'
                     annotator.box_label(xyxy, label, color=colors(c, True))
-
+                    
+            print("-----------------------------------")
             # Stream results
             im0 = annotator.result()
-            if view_img:
-                cv2.imshow(str(p), im0)
-                cv2.waitKey(100)  # 1 millisecond1
 
             # Save results (image with detections)
             if save_img:
