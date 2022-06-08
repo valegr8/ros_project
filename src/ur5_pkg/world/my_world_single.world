@@ -183,7 +183,7 @@
     <!-- blocchi da spostare--> -->
 
     <model name="X1-Y3-Z2">
-      <pose>-0.225354 0.476785 1.02 -0.000128 -0.000093 1.021877</pose>
+      <pose>-0.225354 0.476785 1.02 0 0 0</pose>
       <link name="link">
         <inertial>
           <mass>0.1</mass>
