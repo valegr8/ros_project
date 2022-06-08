@@ -10,7 +10,179 @@
       <uri>model://ground_plane</uri>
     </include>
 
-    <model name="X2-Y2-Z2-FILLET">
+
+    <!-- blocchi ai lati per definire la posizione finale -->
+    <model name="X1-Y1-Z2-locked">
+      <static>true</static>
+      <pose>-1.15 0 1.02 0 0 -1.592925</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <mesh>
+              <uri>model://X1-Y1-Z2.stl</uri>
+              <scale>0.0012 0.0012 0.0012</scale>
+            </mesh>
+          </geometry>
+        </visual>
+      </link>
+    </model>
+
+    <model name="X1-Y2-Z1-locked">
+      <pose>-1.15 0.1 1.02 0 0 -1.592925</pose>
+      <static>true</static>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <mesh>
+              <uri>model://X1-Y2-Z1.stl</uri>
+              <scale>0.0012 0.0012 0.0012</scale>
+            </mesh>
+          </geometry>
+        </visual>
+      </link>
+    </model>
+
+    <model name="X1-Y4-Z2-locked">
+      <pose>-1.15 0.2 1.02 0 0 -1.592925</pose>
+      <static>true</static>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <mesh>
+              <uri>model://X1-Y4-Z2.stl</uri>
+              <scale>0.0012 0.0012 0.0012</scale>
+            </mesh>
+          </geometry>
+        </visual>
+      </link>
+    </model>
+
+    <model name="X2-Y2-Z2-FILLET-locked">
+      <pose>-1.15 0.3 1.02 0 0 -1.592925</pose>
+      <static>true</static>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <mesh>
+              <uri>model://X2-Y2-Z2-FILLET.stl</uri>
+              <scale>0.0012 0.0012 0.0012</scale>
+            </mesh>
+          </geometry>
+        </visual>
+      </link>
+    </model>
+
+    <model name="X2-Y2-Z2-locked">
+      <pose>-1.15 0.4 1.02 0 0 -1.592925</pose>
+      <static>true</static>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <mesh>
+              <uri>model://X2-Y2-Z2.stl</uri>
+              <scale>0.0012 0.0012 0.0012</scale>
+            </mesh>
+          </geometry>
+        </visual>
+      </link>
+    </model>
+
+    <model name="X1-Y2-Z2-CHAMFER-locked">
+      <pose>-1.15 0.5 1.02 0 0 -1.592925</pose>
+      <link name="link">
+        <static>true</static>
+        <visual name="visual">
+          <geometry>
+            <mesh>
+              <uri>model://X1-Y2-Z2-CHAMFER.stl</uri>
+              <scale>0.0012 0.0012 0.0012</scale>
+            </mesh>
+          </geometry>
+        </visual>
+      </link>
+    </model>
+
+    <model name="X1-Y2-Z2-TWINFILLET-locked">
+      <pose>1.15 0 1.02 0 0 -1.592925</pose>
+      <static>true</static>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <mesh>
+              <uri>model://X1-Y2-Z2-TWINFILLET.stl</uri>
+              <scale>0.0012 0.0012 0.0012</scale>
+            </mesh>
+          </geometry>
+        </visual>
+      </link>
+    </model>
+
+    <model name="X1-Y2-Z2-locked">
+      <pose>1.15 0.1 1.02 0 0 -1.592925</pose>
+      <static>true</static>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <mesh>
+              <uri>model://X1-Y2-Z2.stl</uri>
+              <scale>0.0012 0.0012 0.0012</scale>
+            </mesh>
+          </geometry>
+        </visual>
+      </link>
+    </model>
+
+
+    <model name="X1-Y3-Z2-FILLET-locked">
+      <pose>1.15 0.2 1.02 0 0 -1.592925</pose>
+      <static>true</static>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <mesh>
+              <uri>model://X1-Y3-Z2-FILLET.stl</uri>
+              <scale>0.0012 0.0012 0.0012</scale>
+            </mesh>
+          </geometry>
+        </visual>
+      </link>
+    </model>
+
+
+    <model name="X1-Y3-Z2-locked">
+      <pose>1.15 0.3 1.02 0 0 -1.592925</pose>
+      <static>true</static>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <mesh>
+              <uri>model://X1-Y3-Z2.stl</uri>
+              <scale>0.0012 0.0012 0.0012</scale>
+            </mesh>
+          </geometry>
+        </visual>
+      </link>
+    </model>
+
+
+    <model name="X1-Y4-Z1-locked">
+    <static>true</static>
+      <pose>1.15 0.4 1.02 0 0 -1.592925</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <mesh>
+              <uri>model://X1-Y4-Z1.stl</uri>
+              <scale>0.0012 0.0012 0.0012</scale>
+            </mesh>
+          </geometry>
+        </visual>
+      </link>
+    </model>
+
+    <!-- blocchi da spostare--> -->
+
+    <model name="X2-Y2-Z2">
       <pose>0 0.6 1.05 0 -0.000093 2,749718</pose>
       <link name="link">
         <inertial>
@@ -24,16 +196,16 @@
         <collision name="collision">
           <geometry>
             <mesh>
-              <uri>model://X2-Y2-Z2-FILLET.stl</uri>
-              <scale>0.0015 0.0015 0.0015</scale>
+              <uri>model://X2-Y2-Z2.stl</uri>
+              <scale>0.002 0.002 0.002</scale>
             </mesh>
           </geometry>
         </collision>
         <visual name="visual">
           <geometry>
             <mesh>
-              <uri>model://X2-Y2-Z2-FILLET.stl</uri>
-              <scale>0.0015 0.0015 0.0015</scale>
+              <uri>model://X2-Y2-Z2.stl</uri>
+              <scale>0.002 0.002 0.002</scale>
             </mesh>
           </geometry>
         </visual>
@@ -55,7 +227,7 @@
           <geometry>
             <mesh>
               <uri>model://X1-Y1-Z2.stl</uri>
-              <scale>0.0015 0.0015 0.0015</scale>
+              <scale>0.002 0.002 0.002</scale>
             </mesh>
           </geometry>
         </collision>
@@ -63,7 +235,7 @@
           <geometry>
             <mesh>
               <uri>model://X1-Y1-Z2.stl</uri>
-              <scale>0.0015 0.0015 0.0015</scale>
+              <scale>0.002 0.002 0.002</scale>
             </mesh>
           </geometry>
         </visual>
@@ -86,7 +258,7 @@
           <geometry>
             <mesh>
               <uri>model://X1-Y4-Z2.stl</uri>
-              <scale>0.0015 0.0015 0.0015</scale>
+              <scale>0.002 0.002 0.002</scale>
             </mesh>
           </geometry>
         </collision>
@@ -94,7 +266,7 @@
           <geometry>
             <mesh>
               <uri>model://X1-Y4-Z2.stl</uri>
-              <scale>0.0015 0.0015 0.0015</scale>
+              <scale>0.002 0.002 0.002</scale>
             </mesh>
           </geometry>
         </visual>
@@ -171,8 +343,274 @@
     </link>
   </model>
 
-    <model name="table">
+    <model name="table1">
       <pose>0 0.55 0 0 0 1.55</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="surface">
+          <pose>0 0 1.0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>1.5 0.8 0.03</size>
+            </box>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>0.6</mu>
+                <mu2>0.6</mu2>
+              </ode>
+            </friction>
+          </surface>
+        </collision>
+        <visual name="visual1">
+          <pose>0 0 1.0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>1.5 0.8 0.03</size>
+            </box>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Wood</name>
+            </script>
+          </material>
+        </visual>
+        <collision name="front_left_leg_c">
+          <pose>0.68 0.38 0.5 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.02</radius>
+              <length>1.0</length>
+            </cylinder>
+          </geometry>
+        </collision>
+        <visual name="front_left_leg_v">
+          <pose>0.68 0.38 0.5 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.02</radius>
+              <length>1.0</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Grey</name>
+            </script>
+          </material>
+        </visual>
+        <collision name="front_right_leg_c">
+          <pose>0.68 -0.38 0.5 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.02</radius>
+              <length>1.0</length>
+            </cylinder>
+          </geometry>
+        </collision>
+        <visual name="front_right_leg_v">
+          <pose>0.68 -0.38 0.5 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.02</radius>
+              <length>1.0</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Grey</name>
+            </script>
+          </material>
+        </visual>
+        <collision name="back_right_leg_c">
+          <pose>-0.68 -0.38 0.5 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.02</radius>
+              <length>1.0</length>
+            </cylinder>
+          </geometry>
+        </collision>
+        <visual name="back_right_leg_v">
+          <pose>-0.68 -0.38 0.5 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.02</radius>
+              <length>1.0</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Grey</name>
+            </script>
+          </material>
+        </visual>
+        <collision name="back_left_leg_c">
+          <pose>-0.68 0.38 0.5 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.02</radius>
+              <length>1.0</length>
+            </cylinder>
+          </geometry>
+        </collision>
+        <visual name="back_left_leg_v">
+          <pose>-0.68 0.38 0.5 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.02</radius>
+              <length>1.0</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Grey</name>
+            </script>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="table2">
+      <pose>-0.8 0.55 0 0 0 1.55</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="surface">
+          <pose>0 0 1.0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>1.5 0.8 0.03</size>
+            </box>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>0.6</mu>
+                <mu2>0.6</mu2>
+              </ode>
+            </friction>
+          </surface>
+        </collision>
+        <visual name="visual1">
+          <pose>0 0 1.0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>1.5 0.8 0.03</size>
+            </box>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Wood</name>
+            </script>
+          </material>
+        </visual>
+        <collision name="front_left_leg_c">
+          <pose>0.68 0.38 0.5 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.02</radius>
+              <length>1.0</length>
+            </cylinder>
+          </geometry>
+        </collision>
+        <visual name="front_left_leg_v">
+          <pose>0.68 0.38 0.5 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.02</radius>
+              <length>1.0</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Grey</name>
+            </script>
+          </material>
+        </visual>
+        <collision name="front_right_leg_c">
+          <pose>0.68 -0.38 0.5 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.02</radius>
+              <length>1.0</length>
+            </cylinder>
+          </geometry>
+        </collision>
+        <visual name="front_right_leg_v">
+          <pose>0.68 -0.38 0.5 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.02</radius>
+              <length>1.0</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Grey</name>
+            </script>
+          </material>
+        </visual>
+        <collision name="back_right_leg_c">
+          <pose>-0.68 -0.38 0.5 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.02</radius>
+              <length>1.0</length>
+            </cylinder>
+          </geometry>
+        </collision>
+        <visual name="back_right_leg_v">
+          <pose>-0.68 -0.38 0.5 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.02</radius>
+              <length>1.0</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Grey</name>
+            </script>
+          </material>
+        </visual>
+        <collision name="back_left_leg_c">
+          <pose>-0.68 0.38 0.5 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.02</radius>
+              <length>1.0</length>
+            </cylinder>
+          </geometry>
+        </collision>
+        <visual name="back_left_leg_v">
+          <pose>-0.68 0.38 0.5 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.02</radius>
+              <length>1.0</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Grey</name>
+            </script>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="table3">
+      <pose>0.8 0.55 0 0 0 1.55</pose>
       <static>true</static>
       <link name="link">
         <collision name="surface">

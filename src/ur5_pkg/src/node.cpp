@@ -139,60 +139,51 @@ void moveLegosToPos(ros::Rate& loop_rate,ros::NodeHandle nodeHandle){
         //posizione finale
         if (name.compare("X1-Y1-Z2") == 0)
         {
-            to.first(0) = 0.2;
-            to.first(1) = 0.3;
-            to.first(2) = 0.25;
+            to.first(0) = -0.45;
+            to.first(1) = 0;
         }
         if (name.compare("X1-Y2-Z1") == 0) {
-            to.first(0) = -0.2;
-            to.first(1) = 0.3;
-            to.first(2) = 0.25;
+            to.first(0) = -0.45;
+            to.first(1) = 0.1;
         }
         if (name.compare("X1-Y2-Z2-CHAMFER") == 0) {
-            to.first(0) = -0.4;
-            to.first(1) = 0.3;
-            to.first(2) = 0.25;
+            to.first(0) = -0.45;
+            to.first(1) = 0.5;
         }
         if (name.compare("X1-Y2-Z2-TWINFILLET") == 0) {
-            to.first(0) = -0.3;
-            to.first(1) = 0.3;
-            to.first(2) = 0.25;
+            to.first(0) = 0.45;
+            to.first(1) = 0;
         }
         if (name.compare("X1-Y2-Z2") == 0) {
-            to.first(0) = -0.2;
-            to.first(1) = 0.4;
-            to.first(2) = 0.25;
+            to.first(0) = 0.45;
+            to.first(1) = 0.1;
         }
         if (name.compare("X1-Y3-Z2-FILLET") == 0) {
-            to.first(0) = 0.4;
-            to.first(1) = 0.3;
-            to.first(2) = 0.25;
+            to.first(0) = 0.45;
+            to.first(1) = 0.2;
         }
         if (name.compare("X1-Y3-Z2") == 0) {
-            to.first(0) = 0.5;
+            to.first(0) = 0.45;
             to.first(1) = 0.3;
-            to.first(2) = 0.25;
         }
         if (name.compare("X1-Y4-Z1") == 0) {
-            to.first(0) = -0.5;
-            to.first(1) = 0.3;
-            to.first(2) = 0.25;
+            to.first(0) = 0.45;
+            to.first(1) = 0.4;
         }
         if (name.compare("X1-Y4-Z2") == 0) {
-            to.first(0) = 0.6;
+            to.first(0) = -0.45;
             to.first(1) = 0.2;
-            to.first(2) = 0.25;
         }
         if (name.compare("X2-Y2-Z2-FILLET") == 0) {
-            to.first(0) = -0.2;
+            to.first(0) = -0.45;
             to.first(1) = 0.3;
-            to.first(2) = 0.25;
         }
         if (name.compare("X2-Y2-Z2") == 0) {
-            to.first(0) = 0.3;
-            to.first(1) = -0.3;
-            to.first(2) = 0.25;
+            to.first(0) = -0.45;
+            to.first(1) = 0.4;
         }
+
+        to.first(2) = 0.25;
         
         cout << RED << name << " va nella posiione: x " << to.first(0) << " - y " <<  to.first(2) << " - z " << to.first(2) << NC << endl;
 
