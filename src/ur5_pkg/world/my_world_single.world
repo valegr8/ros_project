@@ -182,37 +182,7 @@
 
     <!-- blocchi da spostare--> -->
 
-    <model name="X1-Y3-Z2-FILLET">
-      <pose>0 0.6 1.05 0 -0.000093 2,749718</pose>
-      <link name="link">
-        <inertial>
-          <mass>0.1</mass>
-          <inertia>
-            <ixx>0.000166667</ixx>
-            <iyy>0.000166667</iyy>
-            <izz>0.000166667</izz>
-          </inertia>
-        </inertial>
-        <collision name="collision">
-          <geometry>
-            <mesh>
-              <uri>model://X1-Y3-Z2-FILLET.stl</uri>
-              <scale>0.002 0.002 0.002</scale>
-            </mesh>
-          </geometry>
-        </collision>
-        <visual name="visual">
-          <geometry>
-            <mesh>
-              <uri>model://X1-Y3-Z2-FILLET.stl</uri>
-              <scale>0.002 0.002 0.002</scale>
-            </mesh>
-          </geometry>
-        </visual>
-      </link>
-    </model>
-
-    <model name="X1-Y1-Z2">
+    <model name="X1-Y3-Z2">
       <pose>-0.225354 0.476785 1.02 -0.000128 -0.000093 1.021877</pose>
       <link name="link">
         <inertial>
@@ -226,7 +196,7 @@
         <collision name="collision">
           <geometry>
             <mesh>
-              <uri>model://X1-Y1-Z2.stl</uri>
+              <uri>model://X1-Y3-Z2.stl</uri>
               <scale>0.002 0.002 0.002</scale>
             </mesh>
           </geometry>
@@ -234,38 +204,7 @@
         <visual name="visual">
           <geometry>
             <mesh>
-              <uri>model://X1-Y1-Z2.stl</uri>
-              <scale>0.002 0.002 0.002</scale>
-            </mesh>
-          </geometry>
-        </visual>
-      </link>
-    </model>
-
-
-    <model name="X1-Y4-Z2">
-      <pose>0.265136 0.544203 1.015000 0 0 0.577600</pose>
-      <link name="link">
-        <inertial>
-          <mass>0.1</mass>
-          <inertia>
-            <ixx>0.000166667</ixx>
-            <iyy>0.000166667</iyy>
-            <izz>0.000166667</izz>
-          </inertia>
-        </inertial>
-        <collision name="collision">
-          <geometry>
-            <mesh>
-              <uri>model://X1-Y4-Z2.stl</uri>
-              <scale>0.002 0.002 0.002</scale>
-            </mesh>
-          </geometry>
-        </collision>
-        <visual name="visual">
-          <geometry>
-            <mesh>
-              <uri>model://X1-Y4-Z2.stl</uri>
+              <uri>model://X1-Y3-Z2.stl</uri>
               <scale>0.002 0.002 0.002</scale>
             </mesh>
           </geometry>
