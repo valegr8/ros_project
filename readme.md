@@ -1,3 +1,11 @@
+# Robotic's Course Project
+Control a UR5 antropomorphic manipulator. 
+Recognize objects using YOLO model and move them to the correct positions.
+
+Kinematics + PID Controller 
+
+ROS + Gazebo for the enviroment's simulation.
+
 To launch Gazebo:
 
 	catkin_make OPPURE catkin build --env-cache
